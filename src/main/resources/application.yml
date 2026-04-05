@@ -8,6 +8,12 @@ spring:
     username: sa
     password: 你的SQL Server密码
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  application:
+    name: campus-trade-hub
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
 
 server:
   port: 8080
@@ -19,3 +25,7 @@ mybatis-plus:
     db-config:
       id-type: auto
       logic-delete-field: deleted
+
+app:
+  upload:
+    avatar-dir: uploads/avatars

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录 - 校内二手交易平台</title>
+    <link rel="stylesheet" href="/css/user/user-center.css">
+</head>
+<body class="user-page">
+<div class="bg-layer"></div>
+<main class="card auth-card">
+    <h1>欢迎回来</h1>
+    <p class="sub">登录后进入你的用户中心</p>
+
+    <div class="msg error" th:if="${error}" th:text="${error}"></div>
+
+    <form method="post" action="/user/login" class="form-grid">
+        <label>学号</label>
+        <input type="text" name="studentId" th:value="${studentId}" placeholder="请输入学号" required>
+
+        <label>密码</label>
+        <input type="password" name="password" placeholder="请输入密码" required>
+
+        <button type="submit" class="btn primary">登录</button>
+    </form>
+
+    <p class="tip">还没有账号？<a href="/user/register">立即注册</a></p>
+</main>
+</body>
+</html>
