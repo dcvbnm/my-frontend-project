@@ -1,6 +1,6 @@
-package org.ershoupingtai.class;
+package org.ershoupingtai.pojo;
 
 public class goods {
-    Strng GoodsName;
+    String GoodsName;
     String GoodsPrice;
 }

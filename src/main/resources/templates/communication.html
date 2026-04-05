@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>买家和卖家沟通平台</title>
+    <link rel="stylesheet" href="../static/css/communication.css">
+</head>
+<body>
+<div class="trade-chat">
+    <!-- 头部显示商品 & 卖家/买家身份 -->
+    <div class="trade-header">
+        <div class="product-thumb">👜</div>
+        <div class="product-info">
+            <div class="product-title">
+                复古手提斜挎包 <span class="price-tag">¥189</span>
+            </div>
+            <div class="product-meta">
+                <span>⭐ 4.9 · 已售246件</span>
+                <span>🚚 包邮</span>
+            </div>
+        </div>
+        <div class="role-badge seller-badge">
+            👩‍💼 卖家 · 时尚小铺
+        </div>
+    </div>
+
+    <!-- 聊天消息区域 -->
+    <div class="chat-messages" id="tradeMessagesArea">
+        <!-- 初始为空，由 JavaScript 动态生成 -->
+    </div>
+
+    <!-- 正在输入提示区 (买家或卖家正在输入) -->
+    <div class="typing-area" id="tradeTypingArea"></div>
+
+    <!-- 快捷交易按钮区 + 输入框 -->
+    <div class="input-section">
+        <div class="quick-actions">
+            <button class="quick-btn" data-msg="请问可以拍实物视频吗？">📹 问实物视频</button>
+            <button class="quick-btn" data-msg="包邮吗？今天能发货吗？">🚚 咨询发货</button>
+            <button class="quick-btn" data-msg="价格还能再优惠吗？">💰 议价</button>
+            <button class="quick-btn" data-msg="有保修吗？支持退换吗？">🛡️ 售后咨询</button>
+        </div>
+        <div class="input-wrapper">
+            <div class="input-box">
+                <textarea id="tradeMessageInput" rows="1" placeholder="请输入文本"></textarea>
+            </div>
+                <button class="send-trade" id="sendTradeBtn">发送</button>
+        </div>
+        <div class="trade-notice">
+            💡 买卖沟通友善第一，交易前确认好细节哦～
+        </div>
+    </div>
+</div>
+
+<script src="../static/js/communication.js"></script>
+</body>
+</html>
