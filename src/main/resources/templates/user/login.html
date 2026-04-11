@@ -8,23 +8,93 @@
 </head>
 <body class="user-page">
 <div class="bg-layer"></div>
-<main class="card auth-card">
-    <h1>欢迎回来</h1>
-    <p class="sub">登录后进入你的用户中心</p>
+<main class="card auth-card auth-shell">
+    <section class="auth-brand">
+        <p class="auth-kicker">Campus Trade Hub</p>
+        <h1>欢迎使用</h1>
+        <p class="sub">登录后进入你的用户中心，查看发布、收藏和消息通知。</p>
+        <ul class="auth-points">
+            <li>统一管理个人资料与收货地址</li>
+            <li>实时查看我发布和我的收藏</li>
+            <li>在消息通知中跟进订单状态</li>
+        </ul>
+    </section>
 
-    <div class="msg error" th:if="${error}" th:text="${error}"></div>
+    <section class="auth-panel">
+        <h2>账号登录</h2>
+        <div id="loginError" class="msg error" style="display:none"></div>
 
-    <form method="post" action="/user/login" class="form-grid">
-        <label>学号</label>
-        <input type="text" name="studentId" th:value="${studentId}" placeholder="请输入学号" required>
+        <form id="loginForm" class="form-grid">
+            <label>学号</label>
+            <input type="text" name="studentId" placeholder="请输入学号" required>
 
-        <label>密码</label>
-        <input type="password" name="password" placeholder="请输入密码" required>
+            <label>密码</label>
+            <input type="password" name="password" placeholder="请输入密码" required>
 
-        <button type="submit" class="btn primary">登录</button>
-    </form>
+            <button type="submit" class="btn primary">登录</button>
+        </form>
 
-    <p class="tip">还没有账号？<a href="/user/register">立即注册</a></p>
+        <p class="tip">还没有账号？<a href="/user/register">立即注册</a></p>
+    </section>
 </main>
+<script>
+    (function () {
+        var loginForm = document.getElementById('loginForm');
+        var loginError = document.getElementById('loginError');
+
+        // 每个浏览器端维护一个稳定的设备标识，用于后端区分 refresh 会话。
+        function getOrCreateDeviceId() {
+            var key = 'deviceId';
+            var existed = localStorage.getItem(key);
+            if (existed) {
+                return existed;
+            }
+            var created = (window.crypto && window.crypto.randomUUID)
+                ? window.crypto.randomUUID()
+                : 'web-' + Date.now() + '-' + Math.random().toString(16).substring(2);
+            localStorage.setItem(key, created);
+            return created;
+        }
+
+        function showError(msg) {
+            loginError.textContent = msg;
+            loginError.style.display = 'block';
+        }
+
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            loginError.style.display = 'none';
+            var formData = new FormData(loginForm);
+            formData.append('deviceId', getOrCreateDeviceId());
+
+            fetch('/api/user/login', {
+                method: 'POST',
+                body: formData
+            }).then(function (res) {
+                return res.json();
+            }).then(function (result) {
+                if (result.code !== 200 || !result.data) {
+                    showError(result.msg || '登录失败');
+                    return;
+                }
+
+                var userId = result.data.userId;
+                var userName = result.data.userName;
+                var userInfo = {
+                    userId: `${userId}`,
+                    userName: `${userName}`
+                };
+
+                // 登录成功后落地双令牌与用户信息，后续请求由中心页统一携带 access token。
+                localStorage.setItem('accessToken', result.data.accessToken);
+                localStorage.setItem('refreshToken', result.data.refreshToken);
+                localStorage.setItem('userInfo', JSON.stringify(userInfo));
+                window.location.href = '/user/center';
+            }).catch(function () {
+                showError('请求失败，请稍后重试');
+            });
+        });
+    })();
+</script>
 </body>
 </html>

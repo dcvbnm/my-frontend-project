@@ -12,28 +12,87 @@
     <h1>创建账号</h1>
     <p class="sub">加入校内二手交易平台</p>
 
-    <div class="msg error" th:if="${error}" th:text="${error}"></div>
+    <div id="registerError" class="msg error" style="display:none"></div>
 
-    <form method="post" action="/user/register" class="form-grid">
+    <form id="registerForm" class="form-grid">
         <label>学号</label>
-        <input type="text" name="studentId" th:value="${studentId}" placeholder="例如：20260008" required>
+        <input type="text" name="studentId" placeholder="例如：20260008" required>
 
         <label>昵称</label>
-        <input type="text" name="username" th:value="${username}" placeholder="你的昵称" required>
+        <input type="text" name="username" placeholder="你的昵称" required>
 
         <label>密码</label>
         <input type="password" name="password" placeholder="至少 6 位" required>
 
         <label>手机号</label>
-        <input type="text" name="phone" th:value="${phone}" placeholder="可选">
+        <input type="text" name="phone" placeholder="可选">
 
         <label>邮箱</label>
-        <input type="email" name="email" th:value="${email}" placeholder="可选">
+        <input type="email" name="email" placeholder="可选">
 
         <button type="submit" class="btn primary">注册并登录</button>
     </form>
 
     <p class="tip">已有账号？<a href="/user/login">去登录</a></p>
 </main>
+<script>
+    (function () {
+        var registerForm = document.getElementById('registerForm');
+        var registerError = document.getElementById('registerError');
+
+        // 注册与登录共用设备标识，保证 refresh token 会话轨迹一致。
+        function getOrCreateDeviceId() {
+            var key = 'deviceId';
+            var existed = localStorage.getItem(key);
+            if (existed) {
+                return existed;
+            }
+            var created = (window.crypto && window.crypto.randomUUID)
+                ? window.crypto.randomUUID()
+                : 'web-' + Date.now() + '-' + Math.random().toString(16).substring(2);
+            localStorage.setItem(key, created);
+            return created;
+        }
+
+        function showError(msg) {
+            registerError.textContent = msg;
+            registerError.style.display = 'block';
+        }
+
+        registerForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            registerError.style.display = 'none';
+            var formData = new FormData(registerForm);
+            formData.append('deviceId', getOrCreateDeviceId());
+
+            fetch('/api/user/register', {
+                method: 'POST',
+                body: formData
+            }).then(function (res) {
+                return res.json();
+            }).then(function (result) {
+                if (result.code !== 200 || !result.data) {
+                    showError(result.msg || '注册失败');
+                    return;
+                }
+
+                var userId = result.data.userId;
+                var userName = result.data.userName;
+                var userInfo = {
+                    userId: `${userId}`,
+                    userName: `${userName}`
+                };
+
+                // 注册成功即自动登录，直接写入双令牌进入用户中心。
+                localStorage.setItem('accessToken', result.data.accessToken);
+                localStorage.setItem('refreshToken', result.data.refreshToken);
+                localStorage.setItem('userInfo', JSON.stringify(userInfo));
+                window.location.href = '/user/center';
+            }).catch(function () {
+                showError('请求失败，请稍后重试');
+            });
+        });
+    })();
+</script>
 </body>
 </html>

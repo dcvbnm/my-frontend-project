@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,15 +12,33 @@
     <header class="header-row">
         <div>
             <h1>用户中心</h1>
-            <p class="sub" th:text="'欢迎你，' + ${user.username} + '（学号：' + ${user.studentId} + '）'">欢迎你</p>
+            <p id="welcomeText" class="sub">正在加载用户信息...</p>
         </div>
-        <form method="post" action="/user/logout">
-            <button type="submit" class="btn ghost">退出登录</button>
-        </form>
+        <button id="logoutBtn" type="button" class="btn ghost">退出登录</button>
     </header>
 
-    <div class="msg success" th:if="${success}" th:text="${success}"></div>
-    <div class="msg error" th:if="${error}" th:text="${error}"></div>
+    <div id="globalSuccess" class="msg success" style="display:none"></div>
+    <div id="globalError" class="msg error" style="display:none"></div>
+
+    <section class="stats-strip">
+        <article class="stat-card">
+            <p class="stat-label">收货地址</p>
+            <p id="statAddress" class="stat-value">0</p>
+        </article>
+        <article class="stat-card">
+            <p class="stat-label">我发布的商品</p>
+            <p id="statPublished" class="stat-value">0</p>
+        </article>
+        <article class="stat-card">
+            <p class="stat-label">我的收藏</p>
+            <p id="statFavorite" class="stat-value">0</p>
+        </article>
+        <article class="stat-card">
+            <p class="stat-label">未读通知</p>
+            <p id="statUnread" class="stat-value">0</p>
+        </article>
+    </section>
+
     <div class="center-layout">
         <aside class="side-nav" id="sideNav">
             <button class="nav-item is-active" type="button" data-target="pane-avatar">头像与身份</button>
@@ -37,10 +55,10 @@
                 <h2>头像与身份展示</h2>
                 <div class="avatar-grid">
                     <div class="avatar-preview-wrap">
-                        <img class="avatar-preview" th:src="${user.avatarUrl}" alt="用户头像">
-                        <p class="meta">学号：<span th:text="${user.studentId}"></span></p>
+                        <img id="avatarPreview" class="avatar-preview" src="" alt="用户头像">
+                        <p class="meta">学号：<span id="studentIdText">-</span></p>
                     </div>
-                    <form method="post" action="/user/center/avatar" enctype="multipart/form-data" class="form-grid">
+                    <form id="avatarForm" class="form-grid">
                         <label>上传新头像（jpg/png/webp，2MB以内）</label>
                         <input type="file" name="avatar" accept=".jpg,.jpeg,.png,.webp" required>
                         <button type="submit" class="btn primary">上传头像</button>
@@ -50,18 +68,18 @@
 
             <section class="panel tab-pane" id="pane-profile">
                 <h2>个人资料</h2>
-                <form method="post" action="/user/center/profile" class="form-grid">
+                <form id="profileForm" class="form-grid">
                     <label>昵称</label>
-                    <input type="text" name="username" th:value="${user.username}" required>
+                    <input id="usernameInput" type="text" name="username" required>
 
                     <label>手机号</label>
-                    <input type="text" name="phone" th:value="${user.phone}">
+                    <input id="phoneInput" type="text" name="phone">
 
                     <label>邮箱</label>
-                    <input type="email" name="email" th:value="${user.email}">
+                    <input id="emailInput" type="email" name="email">
 
                     <label>个人简介</label>
-                    <textarea name="bio" rows="3" th:text="${user.bio}"></textarea>
+                    <textarea id="bioInput" name="bio" rows="3"></textarea>
 
                     <button type="submit" class="btn primary">保存资料</button>
                 </form>
@@ -69,7 +87,7 @@
 
             <section class="panel tab-pane" id="pane-security">
                 <h2>安全设置</h2>
-                <form method="post" action="/user/center/password" class="form-grid">
+                <form id="passwordForm" class="form-grid">
                     <label>旧密码</label>
                     <input type="password" name="oldPassword" required>
 
@@ -82,29 +100,10 @@
 
             <section class="panel tab-pane" id="pane-address">
                 <h2>收货地址</h2>
-                <div class="list-grid" th:if="${#lists.isEmpty(user.addresses)}">暂无地址，请先添加。</div>
-                <div class="address-list" th:if="${!#lists.isEmpty(user.addresses)}">
-                    <article class="address-item" th:each="addr : ${user.addresses}">
-                        <div>
-                            <strong th:text="${addr.receiverName}"></strong>
-                            <span th:if="${addr.defaultAddress}" class="tag">默认</span>
-                            <p class="sub" th:text="${addr.receiverPhone} + ' · ' + ${addr.campus}"></p>
-                            <p th:text="${addr.detail}"></p>
-                        </div>
-                        <div class="inline-actions">
-                            <form method="post" action="/user/center/address/default" th:if="${!addr.defaultAddress}">
-                                <input type="hidden" name="addressId" th:value="${addr.id}">
-                                <button type="submit" class="btn ghost">设为默认</button>
-                            </form>
-                            <form method="post" action="/user/center/address/delete">
-                                <input type="hidden" name="addressId" th:value="${addr.id}">
-                                <button type="submit" class="btn danger">删除</button>
-                            </form>
-                        </div>
-                    </article>
-                </div>
+                <div id="addressEmpty" class="list-grid" style="display:none">暂无地址，请先添加。</div>
+                <div id="addressList" class="address-list"></div>
 
-                <form method="post" action="/user/center/address/add" class="form-grid split-grid">
+                <form id="addressForm" class="form-grid split-grid">
                     <label>收货人</label>
                     <input type="text" name="receiverName" required>
 
@@ -127,44 +126,20 @@
 
             <section class="panel tab-pane" id="pane-published">
                 <h2>我发布的商品</h2>
-                <div class="list-grid" th:if="${#lists.isEmpty(user.publishedGoods)}">暂无发布记录</div>
-                <article class="goods-item" th:each="item : ${user.publishedGoods}">
-                    <div>
-                        <strong th:text="${item.title}"></strong>
-                        <p class="sub" th:text="${item.status}"></p>
-                    </div>
-                    <span class="price" th:text="${item.price}"></span>
-                </article>
+                <div id="publishedEmpty" class="list-grid" style="display:none">暂无发布记录</div>
+                <div id="publishedList"></div>
             </section>
 
             <section class="panel tab-pane" id="pane-favorite">
                 <h2>我的收藏</h2>
-                <div class="list-grid" th:if="${#lists.isEmpty(user.favoriteGoods)}">暂无收藏内容</div>
-                <article class="goods-item" th:each="item : ${user.favoriteGoods}">
-                    <div>
-                        <strong th:text="${item.title}"></strong>
-                        <p class="sub" th:text="${item.status}"></p>
-                    </div>
-                    <span class="price" th:text="${item.price}"></span>
-                </article>
+                <div id="favoriteEmpty" class="list-grid" style="display:none">暂无收藏内容</div>
+                <div id="favoriteList"></div>
             </section>
 
             <section class="panel tab-pane" id="pane-notice">
                 <h2>消息通知</h2>
-                <div class="list-grid" th:if="${#lists.isEmpty(user.notifications)}">暂无系统消息</div>
-                <article class="notice-item" th:each="n : ${user.notifications}">
-                    <div>
-                        <strong th:text="${n.title}"></strong>
-                        <span class="tag muted" th:if="${n.read}">已读</span>
-                        <span class="tag" th:if="${!n.read}">未读</span>
-                        <p th:text="${n.content}"></p>
-                        <p class="sub" th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd HH:mm')}"></p>
-                    </div>
-                    <form method="post" action="/user/center/notification/read" th:if="${!n.read}">
-                        <input type="hidden" name="notificationId" th:value="${n.id}">
-                        <button type="submit" class="btn ghost">标记已读</button>
-                    </form>
-                </article>
+                <div id="noticeEmpty" class="list-grid" style="display:none">暂无系统消息</div>
+                <div id="noticeList"></div>
             </section>
         </div>
     </div>
@@ -172,12 +147,33 @@
 <script>
     (function () {
         var nav = document.getElementById('sideNav');
-        if (!nav) {
-            return;
-        }
-
         var buttons = Array.prototype.slice.call(nav.querySelectorAll('.nav-item'));
         var panes = Array.prototype.slice.call(document.querySelectorAll('.tab-pane'));
+        var successEl = document.getElementById('globalSuccess');
+        var errorEl = document.getElementById('globalError');
+        var TOKEN_EXPIRED_CODE = 40102;
+        var accessToken = localStorage.getItem('accessToken') || localStorage.getItem('token');
+        var refreshToken = localStorage.getItem('refreshToken');
+        var refreshingPromise = null;
+
+        function getOrCreateDeviceId() {
+            var key = 'deviceId';
+            var existed = localStorage.getItem(key);
+            if (existed) {
+                return existed;
+            }
+            var created = (window.crypto && window.crypto.randomUUID)
+                ? window.crypto.randomUUID()
+                : 'web-' + Date.now() + '-' + Math.random().toString(16).substring(2);
+            localStorage.setItem(key, created);
+            return created;
+        }
+        var deviceId = getOrCreateDeviceId();
+
+        if (!accessToken || !refreshToken) {
+            window.location.href = '/user/login';
+            return;
+        }
 
         function activate(targetId) {
             buttons.forEach(function (btn) {
@@ -188,11 +184,329 @@
             });
         }
 
+        function showMessage(type, message) {
+            successEl.style.display = 'none';
+            errorEl.style.display = 'none';
+            if (type === 'success') {
+                successEl.textContent = message;
+                successEl.style.display = 'block';
+            } else {
+                errorEl.textContent = message;
+                errorEl.style.display = 'block';
+            }
+        }
+
+        function clearAuthAndGoLogin() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('userInfo');
+            window.location.href = '/user/login';
+        }
+
+        // 单飞刷新：并发请求共享同一个 refresh 过程，避免重复换发。
+        function doRefreshToken() {
+            if (refreshingPromise) {
+                return refreshingPromise;
+            }
+
+            var formData = new FormData();
+            formData.append('refreshToken', refreshToken);
+            formData.append('deviceId', deviceId);
+
+            refreshingPromise = fetch('/api/user/refresh', {
+                method: 'POST',
+                body: formData
+            }).then(function (res) {
+                return res.json();
+            }).then(function (result) {
+                if (result.code !== 200 || !result.data) {
+                    throw new Error(result.msg || 'refresh_failed');
+                }
+                accessToken = result.data.accessToken;
+                refreshToken = result.data.refreshToken;
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('refreshToken', refreshToken);
+            }).finally(function () {
+                refreshingPromise = null;
+            });
+            return refreshingPromise;
+        }
+
+        // 所有受保护请求统一走这里：自动带 access token，过期时尝试 refresh 后重试一次。
+        function authFetch(url, options, retryable) {
+            var requestOptions = options || {};
+            var canRetry = retryable !== false;
+            requestOptions.headers = requestOptions.headers || {};
+            requestOptions.headers.Authorization = 'Bearer ' + accessToken;
+            return fetch(url, requestOptions).then(function (res) {
+                if (res.status === 401) {
+                    return res.json().then(function (body) {
+                        if (canRetry && body && body.code === TOKEN_EXPIRED_CODE) {
+                            return doRefreshToken().then(function () {
+                                return authFetch(url, options, false);
+                            });
+                        }
+                        clearAuthAndGoLogin();
+                        throw new Error('未登录或登录已过期');
+                    });
+                }
+                return res.json();
+            });
+        }
+
+        function renderGoods(listId, emptyId, goodsList) {
+            var listEl = document.getElementById(listId);
+            var emptyEl = document.getElementById(emptyId);
+            listEl.innerHTML = '';
+            if (!goodsList || goodsList.length === 0) {
+                emptyEl.style.display = 'block';
+                return;
+            }
+
+            emptyEl.style.display = 'none';
+            goodsList.forEach(function (item) {
+                var card = document.createElement('article');
+                card.className = 'goods-item';
+                card.innerHTML =
+                    '<div><strong>' + (item.title || '-') + '</strong>' +
+                    '<p class="sub">' + (item.status || '-') + '</p></div>' +
+                    '<span class="price">' + (item.price || '-') + '</span>';
+                listEl.appendChild(card);
+            });
+        }
+
+        function renderAddresses(addresses) {
+            var listEl = document.getElementById('addressList');
+            var emptyEl = document.getElementById('addressEmpty');
+            listEl.innerHTML = '';
+            if (!addresses || addresses.length === 0) {
+                emptyEl.style.display = 'block';
+                return;
+            }
+            emptyEl.style.display = 'none';
+
+            addresses.forEach(function (addr) {
+                var item = document.createElement('article');
+                item.className = 'address-item';
+                item.innerHTML =
+                    '<div>' +
+                    '<strong>' + (addr.receiverName || '-') + '</strong>' +
+                    (addr.defaultAddress ? '<span class="tag">默认</span>' : '') +
+                    '<p class="sub">' + (addr.receiverPhone || '-') + ' · ' + (addr.campus || '-') + '</p>' +
+                    '<p>' + (addr.detail || '-') + '</p>' +
+                    '</div>' +
+                    '<div class="inline-actions">' +
+                    (addr.defaultAddress ? '' : '<button class="btn ghost" data-action="set-default" data-id="' + addr.id + '" type="button">设为默认</button>') +
+                    '<button class="btn danger" data-action="delete-address" data-id="' + addr.id + '" type="button">删除</button>' +
+                    '</div>';
+                listEl.appendChild(item);
+            });
+        }
+
+        function renderNotifications(notifications) {
+            var listEl = document.getElementById('noticeList');
+            var emptyEl = document.getElementById('noticeEmpty');
+            listEl.innerHTML = '';
+            if (!notifications || notifications.length === 0) {
+                emptyEl.style.display = 'block';
+                return;
+            }
+            emptyEl.style.display = 'none';
+
+            notifications.forEach(function (n) {
+                var item = document.createElement('article');
+                item.className = 'notice-item';
+                var action = n.read
+                    ? ''
+                    : '<button class="btn ghost" data-action="read-notification" data-id="' + n.id + '" type="button">标记已读</button>';
+                item.innerHTML =
+                    '<div>' +
+                    '<strong>' + (n.title || '-') + '</strong>' +
+                    (n.read ? '<span class="tag muted">已读</span>' : '<span class="tag">未读</span>') +
+                    '<p>' + (n.content || '-') + '</p>' +
+                    '<p class="sub">' + (n.createdAt || '') + '</p>' +
+                    '</div>' + action;
+                listEl.appendChild(item);
+            });
+        }
+
+        function renderUser(user) {
+            document.getElementById('welcomeText').textContent =
+                '欢迎你，' + (user.username || '-') + '（学号：' + (user.studentId || '-') + '）';
+            document.getElementById('avatarPreview').src = user.avatarUrl || '/images/default-avatar.png';
+            document.getElementById('studentIdText').textContent = user.studentId || '-';
+
+            document.getElementById('usernameInput').value = user.username || '';
+            document.getElementById('phoneInput').value = user.phone || '';
+            document.getElementById('emailInput').value = user.email || '';
+            document.getElementById('bioInput').value = user.bio || '';
+
+            var addresses = user.addresses || [];
+            var publishedGoods = user.publishedGoods || [];
+            var favoriteGoods = user.favoriteGoods || [];
+            var notifications = user.notifications || [];
+
+            document.getElementById('statAddress').textContent = addresses.length;
+            document.getElementById('statPublished').textContent = publishedGoods.length;
+            document.getElementById('statFavorite').textContent = favoriteGoods.length;
+            document.getElementById('statUnread').textContent = notifications.filter(function (item) { return !item.read; }).length;
+
+            renderAddresses(addresses);
+            renderGoods('publishedList', 'publishedEmpty', publishedGoods);
+            renderGoods('favoriteList', 'favoriteEmpty', favoriteGoods);
+            renderNotifications(notifications);
+
+            var userInfo = {
+                userId: user.studentId || '',
+                userName: user.username || ''
+            };
+            localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        }
+
+        function refreshSummary() {
+            return authFetch('/api/user/center/summary', {
+                method: 'GET'
+            }).then(function (result) {
+                if (result.code !== 200 || !result.data) {
+                    showMessage('error', result.msg || '获取用户信息失败');
+                    return;
+                }
+                renderUser(result.data);
+            }).catch(function (err) {
+                showMessage('error', err.message || '请求失败');
+            });
+        }
+
+        function postForm(url, formData, successText) {
+            return authFetch(url, {
+                method: 'POST',
+                body: formData
+            }).then(function (result) {
+                if (result.code !== 200) {
+                    showMessage('error', result.msg || '操作失败');
+                    return null;
+                }
+                showMessage('success', successText);
+                return result;
+            }).catch(function (err) {
+                showMessage('error', err.message || '请求失败');
+                return null;
+            });
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(e.target);
+            formData.append('deviceId', deviceId);
+            postForm('/api/user/center/profile', formData, '个人资料更新成功').then(function (result) {
+                if (result && result.data && result.data.user) {
+                    if (result.data.accessToken) {
+                        accessToken = result.data.accessToken;
+                        localStorage.setItem('accessToken', accessToken);
+                    }
+                    if (result.data.refreshToken) {
+                        refreshToken = result.data.refreshToken;
+                        localStorage.setItem('refreshToken', refreshToken);
+                    }
+                    var userInfo = {
+                        userId: result.data.userId || '',
+                        userName: result.data.userName || ''
+                    };
+                    localStorage.setItem('userInfo', JSON.stringify(userInfo));
+                    renderUser(result.data.user);
+                }
+            });
+        });
+
+        document.getElementById('passwordForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(e.target);
+            postForm('/api/user/center/password', formData, '密码修改成功，即将重新登录').then(function (result) {
+                if (result) {
+                    e.target.reset();
+                    // 改密后后端已全端撤销，这里主动清理本地并回登录页。
+                    clearAuthAndGoLogin();
+                }
+            });
+        });
+
+        document.getElementById('addressForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(e.target);
+            postForm('/api/user/center/address', formData, '收货地址添加成功').then(function (result) {
+                if (result) {
+                    e.target.reset();
+                    refreshSummary();
+                }
+            });
+        });
+
+        document.getElementById('avatarForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(e.target);
+            postForm('/api/user/center/avatar', formData, '头像上传成功').then(function (result) {
+                if (result && result.data) {
+                    renderUser(result.data);
+                }
+            });
+        });
+
+        document.getElementById('addressList').addEventListener('click', function (e) {
+            var action = e.target.getAttribute('data-action');
+            var id = e.target.getAttribute('data-id');
+            if (!action || !id) {
+                return;
+            }
+            var formData = new FormData();
+            formData.append('addressId', id);
+
+            if (action === 'set-default') {
+                postForm('/api/user/center/address/default', formData, '默认地址已更新').then(function (result) {
+                    if (result) {
+                        refreshSummary();
+                    }
+                });
+            }
+            if (action === 'delete-address') {
+                postForm('/api/user/center/address/delete', formData, '收货地址已删除').then(function (result) {
+                    if (result) {
+                        refreshSummary();
+                    }
+                });
+            }
+        });
+
+        document.getElementById('noticeList').addEventListener('click', function (e) {
+            var action = e.target.getAttribute('data-action');
+            var id = e.target.getAttribute('data-id');
+            if (action !== 'read-notification' || !id) {
+                return;
+            }
+            var formData = new FormData();
+            formData.append('notificationId', id);
+            postForm('/api/user/center/notification/read', formData, '消息已标记为已读').then(function (result) {
+                if (result) {
+                    refreshSummary();
+                }
+            });
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function () {
+            authFetch('/api/user/logout', {
+                method: 'POST'
+            }).finally(function () {
+                clearAuthAndGoLogin();
+            });
+        });
+
         buttons.forEach(function (btn) {
             btn.addEventListener('click', function () {
                 activate(btn.getAttribute('data-target'));
             });
         });
+
+        refreshSummary();
     })();
 </script>
 </body>
