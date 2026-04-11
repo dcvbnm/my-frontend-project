@@ -1,4 +1,4 @@
-package com.ershoupingtai.common;
+package org.ershoupingtai.common;
 
 public enum ResultCode {
     // 通用状态码

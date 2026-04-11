@@ -6,7 +6,7 @@ spring:
   datasource:
     url: jdbc:sqlserver://localhost:1433;databaseName=campus_trade;encrypt=false;trustServerCertificate=true
     username: sa
-    password: 你的SQL Server密码
+    password: 204729
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
 server:

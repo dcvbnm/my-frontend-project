@@ -1,6 +1,7 @@
     // ---------- 买卖双方私聊核心 (买家 & 卖家) ----------
     // 角色定义: 'buyer' (买家，消息左侧) , 'seller' (卖家，消息右侧)
     let tradeMessages = [];
+    let ws = new WebSocket(`ws://${window.location.host}/api/ws`);  // 连接后端 WebSocket 服务器
     
     // DOM 元素
     const messagesContainer = document.getElementById('tradeMessagesArea');
@@ -204,6 +205,8 @@
     // 清空历史 (可选功能不暴露,但可以保留无清空但增加重置)
     // 买卖场景增加一个清爽功能？为了体验，不主动加清空避免误操作，但可通过控制台；同时已够用。
     
+    
+
     // 快捷按钮处理
     function handleQuickMsg(msgText) {
         if (!msgText) return;

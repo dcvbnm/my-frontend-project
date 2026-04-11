@@ -1,4 +1,4 @@
-package com.ershoupingtai.common;
+package org.ershoupingtai.common;
 
 public class Result<T> {
     private int code;
