@@ -2,9 +2,9 @@ package org.ershoupingtai.pojo;
 
 import java.util.Date;
 
-public class Message {
-    private Long id;
-    private Long conversationId;
+public class Messages {
+    private Integer id;
+    private Integer conversationId;
     private Integer senderId;
     private Integer receiverId;
     private Integer messageType;
@@ -19,22 +19,23 @@ public class Message {
     private Boolean isDeletedBySender;
     private Boolean isDeletedByReceiver;
     private Date createdAt;
+    private String timeStr;
 
-    public Message() {}
+    public Messages() {}
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Long getConversationId() {
+    public Integer getConversationId() {
         return conversationId;
     }
 
-    public void setConversationId(Long conversationId) {
+    public void setConversationId(Integer conversationId) {
         this.conversationId = conversationId;
     }
 
@@ -148,5 +149,13 @@ public class Message {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getTimeStr() {
+        return timeStr;
+    }
+
+    public void setTimeStr(String timeStr) {
+        this.timeStr = timeStr;
     }
 }
