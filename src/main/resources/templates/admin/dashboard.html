@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员首页</title>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #f7f9fc; }
+        .header { background: #1976d2; color: #fff; padding: 18px 24px; }
+        .header a { color: #fff; margin-right: 18px; text-decoration: none; }
+        .container { max-width: 1100px; margin: 28px auto; padding: 0 18px; }
+        .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 0 24px rgba(0,0,0,0.06); margin-bottom: 18px; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+        .grid .card { text-align: center; }
+        .grid .card h2 { margin: 0; font-size: 34px; color: #1976d2; }
+        .grid .card p { margin-top: 10px; color: #666; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <a th:href="@{/admin/dashboard}">首页</a>
+    <a th:href="@{/admin/users}">用户管理</a>
+    <a th:href="@{/admin/goods}">商品管理</a>
+    <a th:href="@{/admin/orders}">订单管理</a>
+    <a th:href="@{/admin/announcements}">公告管理</a>
+    <a th:href="@{/admin/categories}">商品分类</a>
+    <a th:href="@{/admin/statistics}">统计报表</a>
+    <a th:href="@{/admin/logout}">退出登录</a>
+</div>
+<div class="container">
+    <div class="card">
+        <h1>欢迎来到管理员中心</h1>
+        <p>在此可以快速查看平台数据、管理用户、审核商品、查看订单和发布公告。</p>
+    </div>
+    <div class="grid">
+        <div class="card">
+            <h2 th:text="${userCount}">0</h2>
+            <p>注册用户</p>
+        </div>
+        <div class="card">
+            <h2 th:text="${goodsCount}">0</h2>
+            <p>在售商品</p>
+        </div>
+        <div class="card">
+            <h2 th:text="${orderCount}">0</h2>
+            <p>订单总数</p>
+        </div>
+        <div class="card">
+            <h2 th:text="${categoryCount}">0</h2>
+            <p>分类数量</p>
+        </div>
+        <div class="card">
+            <h2 th:text="${totalRevenue}">0.00</h2>
+            <p>已支付总额</p>
+        </div>
+        <div class="card">
+            <h2 th:text="${unpaidOrders}">0</h2>
+            <p>未支付订单</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
