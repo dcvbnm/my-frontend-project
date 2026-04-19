@@ -155,7 +155,7 @@ body {
     }
 
 /* 买家气泡 (左侧，浅灰) */
-.message-row.buyer .bubble {
+.message-row.author .bubble {
     background: #FFFFFF;
     border: 1px solid #E9EDF2;
     color: #1F2A44;
@@ -164,7 +164,7 @@ body {
     }
 
 /* 卖家气泡 (右侧，品牌橙色) */
-.message-row.seller .bubble {
+.message-row.my .bubble {
     background: linear-gradient(115deg, #F97316, #EA580C);
     color: white;
     border-bottom-right-radius: 5px;

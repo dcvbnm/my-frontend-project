@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员登录</title>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #f4f7f9; }
+        .box { width: 360px; margin: 120px auto; padding: 32px; border-radius: 12px; background: #fff; box-shadow: 0 0 30px rgba(0,0,0,0.08); }
+        h2 { margin-bottom: 24px; color: #333; }
+        input { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #d9d9d9; border-radius: 6px; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 6px; background: #1976d2; color: #fff; font-size: 16px; cursor: pointer; }
+        .error { color: #d32f2f; margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h2>管理员登录</h2>
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+    <form th:action="@{/admin/login}" method="post">
+        <input type="text" name="username" placeholder="用户名" required>
+        <input type="password" name="password" placeholder="密码" required>
+        <button type="submit">登录</button>
+    </form>
+</div>
+</body>
+</html>

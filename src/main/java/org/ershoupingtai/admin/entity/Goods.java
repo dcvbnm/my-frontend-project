@@ -1,20 +1,17 @@
-package org.ershoupingtai.pojo;
+package org.ershoupingtai.admin.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.Date;
 
 @TableName("Goods")
 public class Goods {
-	// 商品主键
-    @TableId(value = "GoodsId", type = IdType.AUTO)
+    @TableId(value = "GoodsId")
     private Integer goodsId;
 
-    // 商品图片、名称、类型和描述
     @TableField("GoodsImage")
     private String goodsImage;
 
@@ -25,16 +22,16 @@ public class Goods {
     private Integer goodsType;
 
     @TableField("GoodsDescription")
-    private String goodsDesc;
+    private String goodsDescription;
 
     @TableField("Price")
-    private BigDecimal goodsPrice;
+    private BigDecimal price;
 
     @TableField("GoodsQuantity")
     private Integer goodsQuantity;
 
     @TableField("GoodsDate")
-    private LocalDate goodsDate;
+    private Date goodsDate;
 
     @TableField("Shelflife")
     private Integer shelflife;
@@ -53,6 +50,9 @@ public class Goods {
 
     @TableField("IsDeleted")
     private Boolean isDeleted;
+
+    @TableField(exist = false)
+    private String sellerName;
 
     public Integer getGoodsId() {
         return goodsId;
@@ -86,20 +86,20 @@ public class Goods {
         this.goodsType = goodsType;
     }
 
-    public String getGoodsDesc() {
-        return goodsDesc;
+    public String getGoodsDescription() {
+        return goodsDescription;
     }
 
-    public void setGoodsDesc(String goodsDesc) {
-        this.goodsDesc = goodsDesc;
+    public void setGoodsDescription(String goodsDescription) {
+        this.goodsDescription = goodsDescription;
     }
 
-    public BigDecimal getGoodsPrice() {
-        return goodsPrice;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setGoodsPrice(BigDecimal goodsPrice) {
-        this.goodsPrice = goodsPrice;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     public Integer getGoodsQuantity() {
@@ -110,11 +110,11 @@ public class Goods {
         this.goodsQuantity = goodsQuantity;
     }
 
-    public LocalDate getGoodsDate() {
+    public Date getGoodsDate() {
         return goodsDate;
     }
 
-    public void setGoodsDate(LocalDate goodsDate) {
+    public void setGoodsDate(Date goodsDate) {
         this.goodsDate = goodsDate;
     }
 
@@ -162,7 +162,15 @@ public class Goods {
         return isDeleted;
     }
 
-    public void setIsDeleted(Boolean deleted) {
-        isDeleted = deleted;
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
     }
 }

@@ -1,64 +1,31 @@
-package org.ershoupingtai.pojo;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+package org.ershoupingtai.pojo.user;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@TableName("Goods")
-public class Goods {
-	// 商品主键
-    @TableId(value = "GoodsId", type = IdType.AUTO)
-    private Integer goodsId;
-
-    // 商品图片、名称、类型和描述
-    @TableField("GoodsImage")
+// 对应 Goods 表字段，供用户中心读取发布商品与收藏商品详情。
+public class GoodsEntity {
+    private Long goodsId;
     private String goodsImage;
-
-    @TableField("GoodsName")
     private String goodsName;
-
-    @TableField("GoodsType")
     private Integer goodsType;
-
-    @TableField("GoodsDescription")
-    private String goodsDesc;
-
-    @TableField("Price")
-    private BigDecimal goodsPrice;
-
-    @TableField("GoodsQuantity")
+    private String goodsDescription;
+    private BigDecimal price;
     private Integer goodsQuantity;
-
-    @TableField("GoodsDate")
     private LocalDate goodsDate;
-
-    @TableField("Shelflife")
     private Integer shelflife;
-
-    @TableField("Views")
     private Integer views;
-
-    @TableField("GoodsLocation")
     private String goodsLocation;
-
-    @TableField("UserId")
-    private Integer userId;
-
-    @TableField("Stock")
+    private Long userId;
     private Boolean stock;
-
-    @TableField("IsDeleted")
+    // 与数据库 IsDeleted 字段保持一致命名，避免 SQL 映射混淆。
     private Boolean isDeleted;
 
-    public Integer getGoodsId() {
+    public Long getGoodsId() {
         return goodsId;
     }
 
-    public void setGoodsId(Integer goodsId) {
+    public void setGoodsId(Long goodsId) {
         this.goodsId = goodsId;
     }
 
@@ -86,20 +53,20 @@ public class Goods {
         this.goodsType = goodsType;
     }
 
-    public String getGoodsDesc() {
-        return goodsDesc;
+    public String getGoodsDescription() {
+        return goodsDescription;
     }
 
-    public void setGoodsDesc(String goodsDesc) {
-        this.goodsDesc = goodsDesc;
+    public void setGoodsDescription(String goodsDescription) {
+        this.goodsDescription = goodsDescription;
     }
 
-    public BigDecimal getGoodsPrice() {
-        return goodsPrice;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setGoodsPrice(BigDecimal goodsPrice) {
-        this.goodsPrice = goodsPrice;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     public Integer getGoodsQuantity() {
@@ -142,11 +109,11 @@ public class Goods {
         this.goodsLocation = goodsLocation;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
@@ -162,7 +129,7 @@ public class Goods {
         return isDeleted;
     }
 
-    public void setIsDeleted(Boolean deleted) {
-        isDeleted = deleted;
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

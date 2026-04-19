@@ -1,4 +1,4 @@
-﻿const goodsTbody = document.getElementById("goodsTbody");
+const goodsTbody = document.getElementById("goodsTbody");
 const countText = document.getElementById("countText");
 const goodsModal = document.getElementById("goodsModal");
 const modalTitle = document.getElementById("modalTitle");
