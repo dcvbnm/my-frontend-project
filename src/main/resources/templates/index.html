@@ -1,11 +1,286 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>校园二手交易平台</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>校园二手平台 - 商品管理</title>
+	<link rel="stylesheet" href="/css/index.css?v=20260411">
 </head>
 <body>
-<h1>校园交易平台欢迎页</h1>
-<p>请访问 /admin/login 进行管理员登录。</p>
+<div class="goods-dashboard">
+	<div class="topbar">
+		<div class="brand-mark">
+			<span class="brand-dot"></span>
+			<div>
+				<strong>Campus Trade Hub</strong>
+				<span>Goods Management Console</span>
+			</div>
+		</div>
+		<div class="topbar-links">
+			<a href="#overview">概览</a>
+			<a href="#filters">筛选</a>
+			<a href="#list">列表</a>
+			<a href="#editor">编辑</a>
+		</div>
+		<div class="topbar-note">LBW · Goods 表已完成适配</div>
+	</div>
+
+	<section class="quick-strip" id="overview">
+		<div class="strip-item">
+			<span>当前状态</span>
+			<strong>商品管理看板</strong>
+			<p>围绕校园二手交易场景优化后的首页。</p>
+		</div>
+		<div class="strip-item highlight">
+			<span>关键能力</span>
+			<strong>发布 / 编辑 / 上下架 / 软删除</strong>
+			<p>全部字段已和 LBW 库 Goods 表一一对应。</p>
+		</div>
+		<div class="strip-item">
+			<span>建议</span>
+			<strong>先补图片，再补描述</strong>
+			<p>商品信息越完整，展示和转化越自然。</p>
+		</div>
+	</section>
+
+	<header class="hero">
+		<div class="hero-copy">
+			<div class="eyebrow">Campus Trade Hub · Goods Center</div>
+			<h1>商品管理中心</h1>
+			<p>发布、编辑、检索校内二手商品，字段结构已与 LBW 库 Goods 表对齐。</p>
+			<div class="hero-tags">
+				<span>软删除</span>
+				<span>上下架</span>
+				<span>图片 / 类型 / 位置</span>
+			</div>
+		</div>
+		<div class="hero-visual">
+			<div class="hero-orb orb-a"></div>
+			<div class="hero-orb orb-b"></div>
+			<div class="hero-card hero-preview">
+				<div class="preview-top">
+					<span class="preview-badge">LIVE</span>
+					<span class="preview-chip">LBW Sync</span>
+				</div>
+				<div class="preview-body">
+					<strong>实时商品看板</strong>
+					<p>面向校园二手交易，优先展示最新上架、价格更合理的商品。</p>
+				</div>
+				<div class="hero-actions">
+					<div class="hero-card">
+						<strong id="totalCount">0</strong>
+						<span>商品总数</span>
+					</div>
+					<div class="hero-card accent">
+						<strong id="saleCount">0</strong>
+						<span>上架中</span>
+					</div>
+				</div>
+				<button id="openCreateBtn" class="primary-btn hero-cta">+ 新增商品</button>
+			</div>
+		</div>
+	</header>
+
+	<section class="overview-grid">
+		<div class="overview-card">
+			<span class="overview-label">管理建议</span>
+			<h3>先补图片，再补描述，最后再调价格</h3>
+			<p>这会让商品卡片在首页和后续交流页里更容易被点击。</p>
+		</div>
+		<div class="overview-card">
+			<span class="overview-label">字段状态</span>
+			<h3>已对齐 Goods 表</h3>
+			<p>商品图片、类型、数量、日期、保质期、位置、用户ID、上架状态都已接入。</p>
+		</div>
+		<div class="overview-card warning">
+			<span class="overview-label">删除策略</span>
+			<h3>采用软删除</h3>
+			<p>删除只会把 IsDeleted 置为 1，不会影响历史数据。</p>
+		</div>
+	</section>
+
+	<section class="search-panel" id="filters">
+		<div class="field-wrap">
+			<label for="keyword">关键词</label>
+			<input id="keyword" type="text" placeholder="商品名/描述/位置">
+		</div>
+		<div class="field-wrap">
+			<label for="searchType">种类</label>
+			<select id="searchType">
+				<option value="">全部</option>
+				<option value="1">电子数码</option>
+				<option value="2">书籍教材</option>
+				<option value="3">生活用品</option>
+				<option value="4">美妆服饰</option>
+				<option value="5">运动器材</option>
+				<option value="6">交通代步</option>
+				<option value="7">二次元/手办</option>
+				<option value="8">票务卡券</option>
+				<option value="9">虚拟物品</option>
+				<option value="10">食品零食</option>
+				<option value="0">其他</option>
+			</select>
+		</div>
+		<div class="field-wrap">
+			<label for="status">状态</label>
+			<select id="status">
+				<option value="">全部</option>
+				<option value="上架">上架</option>
+				<option value="下架">下架</option>
+			</select>
+		</div>
+		<div class="field-wrap">
+			<label for="minPrice">最低价</label>
+			<input id="minPrice" type="number" min="0" step="0.01" placeholder="0">
+		</div>
+		<div class="field-wrap">
+			<label for="maxPrice">最高价</label>
+			<input id="maxPrice" type="number" min="0" step="0.01" placeholder="1000">
+		</div>
+		<div class="action-wrap">
+			<button id="searchBtn" class="primary-btn">查询</button>
+			<button id="resetBtn" class="ghost-btn">重置</button>
+		</div>
+	</section>
+
+	<section class="table-card" id="list">
+		<div class="table-title">
+			<div>
+				<h2>我的商品列表</h2>
+				<p>支持按关键字、价格和上下架状态快速筛选。</p>
+			</div>
+			<span id="countText" class="count-pill">0 条</span>
+		</div>
+		<div class="list-helper">
+			<span>图片自动缩略</span>
+			<span>状态颜色区分</span>
+			<span>行悬停高亮</span>
+		</div>
+		<div class="table-scroll">
+			<table>
+				<thead>
+				<tr>
+					<th>ID</th>
+					<th>图片</th>
+					<th>名称</th>
+					<th>类型</th>
+					<th>描述</th>
+					<th>价格</th>
+					<th>数量</th>
+					<th>日期</th>
+					<th>保质期</th>
+					<th>位置</th>
+					<th>用户ID</th>
+					<th>状态</th>
+					<th>操作</th>
+				</tr>
+				</thead>
+				<tbody id="goodsTbody"></tbody>
+			</table>
+		</div>
+	</section>
+</div>
+
+	<div class="modal-mask hidden" id="goodsModal">
+	<div class="modal">
+		<div class="modal-head">
+			<div>
+			<h3 id="modalTitle">新增商品</h3>
+			<p class="modal-subtitle">填写商品卡片的完整信息，保存后即可在列表中看到。</p>
+			</div>
+			<button id="closeModalBtn" class="icon-btn" type="button">×</button>
+		</div>
+		<div class="modal-divider"></div>
+		<div class="editor-shell" id="editor">
+		<form id="goodsForm" class="goods-form">
+			<input type="hidden" id="goodsId">
+			<div class="grid-2">
+				<div class="field-block">
+					<div class="upload-head">
+						<label class="field-label">商品图片</label>
+						<label for="goodsImageInput" id="uploadImageBtn" class="upload-btn">上传商品</label>
+					</div>
+					<input id="goodsImage" type="hidden">
+					<input id="goodsImageInput" type="file" accept="image/*" style="opacity: 0; position: absolute; z-index: -1; width: 1px; height: 1px;">
+					<div class="upload-meta">
+						<span id="uploadImageName">未选择图片</span>
+						<small>支持 jpg / png / gif / webp / bmp</small>
+					</div>
+					<div id="uploadError" class="upload-error hidden"></div>
+					<div class="upload-preview" id="uploadPreview">
+						<img id="uploadPreviewImg" class="hidden" alt="商品图片预览">
+						<span id="uploadPreviewText">选择后预览</span>
+					</div>
+				</div>
+				<label>商品名称
+					<input id="goodsName" required maxlength="20" placeholder="例如：9成新自行车">
+				</label>
+			</div>
+			<div class="grid-2">
+				<label>商品类型
+					<select id="goodsType" required style="width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; outline: none; transition: border-color 0.2s ease; background: rgba(255, 255, 255, 0.45); font-size: 15px; color: var(--text); -webkit-appearance: none; appearance: none;">
+						<option value="1">电子数码</option>
+						<option value="2">书籍教材</option>
+						<option value="3">生活用品</option>
+						<option value="4">美妆服饰</option>
+						<option value="5">运动器材</option>
+						<option value="6">交通代步</option>
+						<option value="7">二次元/手办</option>
+						<option value="8">票务卡券</option>
+						<option value="9">虚拟物品</option>
+						<option value="10">食品零食</option>
+						<option value="0" selected>其他</option>
+					</select>
+				</label>
+				<label>商品价格
+					<input id="goodsPrice" type="number" min="0" step="0.01" required>
+				</label>
+			</div>
+			<label>商品描述
+				<textarea id="goodsDesc" rows="3" maxlength="200" placeholder="描述商品成色、购买时间等"></textarea>
+			</label>
+			<div class="grid-2">
+				<label>商品数量
+					<input id="goodsQuantity" type="number" min="0" required>
+				</label>
+				<label>商品日期
+					<input id="goodsDate" type="date" required>
+				</label>
+			</div>
+			<div class="grid-2">
+				<label>保质期（天）
+					<div style="display: flex; gap: 8px; align-items: center;">
+						<input id="shelflife" type="number" min="0" style="flex: 1;">
+						<label style="display: flex; align-items: center; white-space: nowrap; margin: 0; font-size: 14px; font-weight: normal; cursor: pointer; width: auto; flex-direction: row; color: #666;">
+							<input type="checkbox" id="noShelflife" style="width: auto; margin-right: 4px; margin-bottom: 0;">无保质期
+						</label>
+					</div>
+				</label>
+				<label>商品位置
+					<input id="goodsLocation" maxlength="50" required placeholder="如：东区宿舍楼下">
+				</label>
+			</div>
+			<div class="grid-2">
+				<label>用户ID
+					<input id="userId" type="number" min="1" required placeholder="发布人ID">
+				</label>
+				<label>上下架状态
+					<select id="goodsStatus">
+						<option value="上架">上架</option>
+						<option value="下架">下架</option>
+					</select>
+				</label>
+			</div>
+
+			<div class="form-actions">
+				<button type="button" id="cancelBtn" class="ghost-btn">取消</button>
+				<button type="submit" class="primary-btn">保存</button>
+			</div>
+		</form>
+		</div>
+	</div>
+</div>
+
+<script src="/js/index.js?v=20260413"></script>
 </body>
 </html>

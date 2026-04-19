@@ -6,6 +6,13 @@ spring:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   thymeleaf:
     cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=LBW;encrypt=false;trustServerCertificate=true
+    username: sa
+    password: 123456
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
 admin:
   username: admin
