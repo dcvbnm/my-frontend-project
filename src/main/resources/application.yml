@@ -4,10 +4,20 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
   datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=campus_trade;encrypt=false;trustServerCertificate=true
+    url: jdbc:sqlserver://localhost:1433;databaseName=1111;encrypt=false;trustServerCertificate=true
     username: sa
     password: 204729
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  application:
+    name: campus-trade-hub
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
+  redis:
+    host: localhost
+    port: 6379
+    timeout: 3000ms
 
 server:
   port: 8080
@@ -19,3 +29,13 @@ mybatis-plus:
     db-config:
       id-type: auto
       logic-delete-field: deleted
+
+app:
+  upload:
+    avatar-dir: uploads/avatars
+
+jwt:
+  secret: campus-trade-hub-jwt-secret-change-in-production-123456
+  issuer: campus-trade-hub
+  access-expire-seconds: 3600
+  refresh-expire-seconds: 604800
