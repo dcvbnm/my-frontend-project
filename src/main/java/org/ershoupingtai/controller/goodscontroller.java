@@ -62,6 +62,18 @@ public class goodscontroller {
 		return "index";
 	}
 
+	@GetMapping("/browse")
+	public String browsePage() {
+		// 商品浏览页入口（模板：browse.html）
+		return "browse";
+	}
+
+	@GetMapping("/buy/{id}")
+	public String buyPage(@PathVariable Long id) {
+		// 商品购买详情页入口（模板：buy.html）
+		return "buy";
+	}
+
 	@ResponseBody
 	@GetMapping("/api/goods")
 	public Result<List<goods>> list(

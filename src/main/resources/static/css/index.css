@@ -87,6 +87,16 @@ body::after {
 	transform: translateY(-1px);
 }
 
+.topbar-links .switch-link {
+	background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+	color: #fff;
+	box-shadow: 0 8px 18px rgba(35, 95, 61, 0.25);
+}
+
+.topbar-links .switch-link:hover {
+	background: linear-gradient(135deg, #2b7449, #1f5939);
+}
+
 .quick-strip {
 	display: grid;
 	grid-template-columns: 1.1fr 1.5fr 1fr;
