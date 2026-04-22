@@ -1,4 +1,4 @@
-package org.ershoupingtai.admin.entity;
+package org.ershoupingtai.service.adminService;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

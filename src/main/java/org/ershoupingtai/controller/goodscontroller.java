@@ -1,9 +1,9 @@
 package org.ershoupingtai.controller;
 
-import com.ershoupingtai.common.Result;
-import com.ershoupingtai.common.ResultCode;
-import org.ershoupingtai.pojo.goods;
-import org.ershoupingtai.service.goodsservice;
+import org.ershoupingtai.common.Result;
+import org.ershoupingtai.common.ResultCode;
+import org.ershoupingtai.pojo.Goods;
+import org.ershoupingtai.service.GoodsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -64,7 +64,7 @@ public class goodscontroller {
 
 	@ResponseBody
 	@GetMapping("/api/goods")
-	public Result<List<goods>> list(
+	public Result<List<Goods>> list(
 			@RequestParam(required = false) String keyword,
 			@RequestParam(required = false) String status,
 			@RequestParam(required = false) Integer goodsType,
@@ -77,8 +77,8 @@ public class goodscontroller {
 
 	@ResponseBody
 	@GetMapping("/api/goods/{id}")
-	public Result<goods> getOne(@PathVariable Long id) {
-		goods item = goodsService.getById(id);
+	public Result<Goods> getOne(@PathVariable Long id) {
+		Goods item = goodsService.getById(id);
 		if (item == null) {
 			return Result.fail(ResultCode.DATA_NOT_FOUND);
 		}
@@ -87,7 +87,7 @@ public class goodscontroller {
 
 	@ResponseBody
 	@PostMapping("/api/goods")
-	public Result<Void> create(@RequestBody goods item) {
+	public Result<Void> create(@RequestBody Goods item) {
 		// Goods表是典型的强约束表，新增时必须校验完整必填字段
 		Result<Void> checkResult = validateGoods(item, false);
 		if (checkResult != null) {
@@ -98,7 +98,7 @@ public class goodscontroller {
 
 	@ResponseBody
 	@PutMapping("/api/goods/{id}")
-	public Result<Void> update(@PathVariable Long id, @RequestBody goods item) {
+	public Result<Void> update(@PathVariable Long id, @RequestBody Goods item) {
 		// 编辑时允许部分字段更新，但传入字段必须合法
 		Result<Void> checkResult = validateGoods(item, true);
 		if (checkResult != null) {
@@ -158,7 +158,7 @@ public class goodscontroller {
 		}
 	}
 
-	private Result<Void> validateGoods(goods item, boolean allowPartialUpdate) {
+	private Result<Void> validateGoods(Goods item, boolean allowPartialUpdate) {
 		if (item == null) {
 			return Result.fail("请求体不能为空");
 		}

@@ -1,28 +1,24 @@
-package org.ershoupingtai.admin.controller;
+package org.ershoupingtai.controller.adminController;
 
-import org.ershoupingtai.admin.entity.Goods;
-import org.ershoupingtai.admin.mapper.GoodsMapper;
+import org.ershoupingtai.service.adminService.AdminGoodsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
-
 @Controller
 public class AdminGoodsController {
 
-    private final GoodsMapper goodsMapper;
+    private final AdminGoodsService adminGoodsService;
 
-    public AdminGoodsController(GoodsMapper goodsMapper) {
-        this.goodsMapper = goodsMapper;
+    public AdminGoodsController(AdminGoodsService adminGoodsService) {
+        this.adminGoodsService = adminGoodsService;
     }
 
     @GetMapping("/admin/goods")
     public String goodsList(Model model) {
-        List<Goods> goodsList = goodsMapper.findAllWithSeller();
-        model.addAttribute("goodsList", goodsList);
+        model.addAttribute("goodsList", adminGoodsService.getGoodsList());
         return "admin/goods";
     }
 
@@ -30,11 +26,11 @@ public class AdminGoodsController {
     public String goodsAction(@RequestParam("id") Integer id,
                               @RequestParam("action") String action) {
         if ("on".equals(action)) {
-            goodsMapper.updateStock(id, true);
+            adminGoodsService.updateGoodsStock(id, true);
         } else if ("off".equals(action)) {
-            goodsMapper.updateStock(id, false);
+            adminGoodsService.updateGoodsStock(id, false);
         } else if ("delete".equals(action)) {
-            goodsMapper.softDelete(id);
+            adminGoodsService.softDeleteGoods(id);
         }
         return "redirect:/admin/goods";
     }
