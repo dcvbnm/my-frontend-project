@@ -2,6 +2,7 @@ package org.ershoupingtai.common.security;
 
 import io.jsonwebtoken.Claims;
 import org.ershoupingtai.common.ResultCode;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -17,6 +18,15 @@ public class JwtInterceptor implements HandlerInterceptor {
     private static final String AUTH_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
 
+    @Value("${app.offline-user.force:true}")
+    private boolean forceOfflineUser;
+
+    @Value("${app.offline-user.student-id:20260001}")
+    private String offlineStudentId;
+
+    @Value("${app.offline-user.username:离线演示账号}")
+    private String offlineUsername;
+
     private final AuthTokenService authTokenService;
 
     public JwtInterceptor(AuthTokenService authTokenService) {
@@ -25,6 +35,12 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if (forceOfflineUser) {
+            // 离线演示模式下放行受保护接口，避免本地联调被鉴权阻塞。
+            UserContext.set(offlineStudentId, offlineUsername);
+            return true;
+        }
+
         // 用户中心接口统一要求 Bearer access token。
         String authHeader = request.getHeader(AUTH_HEADER);
         if (!StringUtils.hasText(authHeader) || !authHeader.startsWith(BEARER_PREFIX)) {

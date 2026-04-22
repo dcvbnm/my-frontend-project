@@ -33,6 +33,12 @@ mybatis-plus:
 app:
   upload:
     avatar-dir: uploads/avatars
+  offline-user:
+    force: true
+    student-id: 20260001
+    password: 123456
+    username: 离线演示账号
+    disable-token-store: true
 
 jwt:
   secret: campus-trade-hub-jwt-secret-change-in-production-123456
