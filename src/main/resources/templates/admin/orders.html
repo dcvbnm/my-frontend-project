@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>订单管理</title>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #f4f7f9; }
+        .header { background: #1976d2; color: #fff; padding: 18px 24px; }
+        .header a { color: #fff; margin-right: 18px; text-decoration: none; }
+        .container { max-width: 1200px; margin: 28px auto; padding: 0 18px; }
+        .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 0 24px rgba(0,0,0,0.06); }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { padding: 14px 12px; border-bottom: 1px solid #e8ecf3; text-align: left; }
+        th { background: #f0f4fa; }
+        .status { padding: 6px 10px; border-radius: 8px; color: #fff; font-size: 13px; }
+        .status-pending { background: #fbc02d; }
+        .status-completed { background: #388e3c; }
+        .status-cancelled { background: #d32f2f; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <a th:href="@{/admin/dashboard}">首页</a>
+    <a th:href="@{/admin/users}">用户管理</a>
+    <a th:href="@{/admin/goods}">商品管理</a>
+    <a th:href="@{/admin/orders}">订单管理</a>
+    <a th:href="@{/admin/announcements}">公告管理</a>
+    <a th:href="@{/admin/categories}">商品分类</a>
+    <a th:href="@{/admin/statistics}">统计报表</a>
+    <a th:href="@{/admin/logout}">退出登录</a>
+</div>
+<div class="container">
+    <div class="card">
+        <h1>订单管理</h1>
+        <table>
+            <thead>
+            <tr>
+                <th>订单ID</th>
+                <th>买家</th>
+                <th>商品</th>
+                <th>数量</th>
+                <th>总价</th>
+                <th>状态</th>
+                <th>订单时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}">
+                <td th:text="${order.orderId}"></td>
+                <td th:text="${order.buyerName}"></td>
+                <td th:text="${order.goodsName}"></td>
+                <td th:text="${order.purchaseQuantity}"></td>
+                <td th:text="${order.totalPrice}"></td>
+                <td>
+                    <span th:text="${order.isPaid} ? (${order.isReceived} ? '已完成' : '待收货') : '未支付'" th:classappend="${order.isPaid} ? ' status-completed' : ' status-pending'"></span>
+                </td>
+                <td th:text="${#dates.format(order.orderTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

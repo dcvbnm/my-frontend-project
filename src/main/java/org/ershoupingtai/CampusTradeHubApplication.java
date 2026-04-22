@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("org.ershoupingtai.mapper")
+@MapperScan("org.ershoupingtai.admin.mapper")
 public class CampusTradeHubApplication {
     public static void main(String[] args) {
         SpringApplication.run(CampusTradeHubApplication.class, args);

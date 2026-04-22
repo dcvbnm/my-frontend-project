@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>商品管理</title>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #f4f7f9; }
+        .header { background: #1976d2; color: #fff; padding: 18px 24px; }
+        .header a { color: #fff; margin-right: 18px; text-decoration: none; }
+        .container { max-width: 1200px; margin: 28px auto; padding: 0 18px; }
+        .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 0 24px rgba(0,0,0,0.06); }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { padding: 14px 12px; border-bottom: 1px solid #e8ecf3; text-align: left; }
+        th { background: #f0f4fa; }
+        button { border: none; padding: 8px 14px; border-radius: 6px; color: #fff; cursor: pointer; }
+        .btn-on { background: #43a047; }
+        .btn-off { background: #f57c00; }
+        .btn-delete { background: #d32f2f; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <a th:href="@{/admin/dashboard}">首页</a>
+    <a th:href="@{/admin/users}">用户管理</a>
+    <a th:href="@{/admin/goods}">商品管理</a>
+    <a th:href="@{/admin/orders}">订单管理</a>
+    <a th:href="@{/admin/announcements}">公告管理</a>
+    <a th:href="@{/admin/categories}">商品分类</a>
+    <a th:href="@{/admin/statistics}">统计报表</a>
+    <a th:href="@{/admin/logout}">退出登录</a>
+</div>
+<div class="container">
+    <div class="card">
+        <h1>商品管理</h1>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>商品名称</th>
+                <th>卖家</th>
+                <th>价格</th>
+                <th>库存</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="goods : ${goodsList}">
+                <td th:text="${goods.goodsId}"></td>
+                <td th:text="${goods.goodsName}"></td>
+                <td th:text="${goods.sellerName}"></td>
+                <td th:text="${goods.price}"></td>
+                <td th:text="${goods.goodsQuantity}"></td>
+                <td th:text="${goods.stock ? '上架' : '下架'}"></td>
+                <td>
+                    <form th:action="@{/admin/goods/action}" method="post" style="display:inline">
+                        <input type="hidden" name="id" th:value="${goods.goodsId}">
+                        <input type="hidden" name="action" th:value="${goods.stock ? 'off' : 'on'}">
+                        <button type="submit" th:classappend="${goods.stock ? 'btn-off' : 'btn-on'}" th:text="${goods.stock ? '下架' : '上架'}"></button>
+                    </form>
+                    <form th:action="@{/admin/goods/action}" method="post" style="display:inline">
+                        <input type="hidden" name="id" th:value="${goods.goodsId}">
+                        <input type="hidden" name="action" value="delete">
+                        <button class="btn-delete" type="submit" onclick="return confirm('确认删除该商品吗？');">删除</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
