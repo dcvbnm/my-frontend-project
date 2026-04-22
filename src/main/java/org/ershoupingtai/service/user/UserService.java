@@ -9,6 +9,7 @@ import org.ershoupingtai.pojo.user.UserGoodsView;
 import org.ershoupingtai.pojo.user.UserInfoEntity;
 import org.ershoupingtai.pojo.user.UserLoginEntity;
 import org.ershoupingtai.pojo.user.UserNotification;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -41,6 +42,18 @@ public class UserService {
 
     private final JdbcTemplate jdbcTemplate;
     private final Map<String, HashSet<Long>> readNotificationCache = new ConcurrentHashMap<>();
+
+    @Value("${app.offline-user.student-id:20260001}")
+    private String offlineStudentId;
+
+    @Value("${app.offline-user.password:123456}")
+    private String offlinePassword;
+
+    @Value("${app.offline-user.username:离线演示账号}")
+    private String offlineUsername;
+
+    @Value("${app.offline-user.force:true}")
+    private boolean forceOfflineUser;
 
     public UserService(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -106,17 +119,42 @@ public class UserService {
         validateRequired(studentId, "请输入学号");
         validateRequired(rawPassword, "请输入密码");
 
-        UserLoginEntity login = getUserLoginByName(studentId.trim());
-        if (login == null || !passwordMatches(rawPassword.trim(), login.getUserPassword())) {
-            throw new IllegalArgumentException("学号或密码错误");
+        String loginName = studentId.trim();
+        String password = rawPassword.trim();
+
+        if (forceOfflineUser) {
+            if (isOfflineUserCredential(loginName, password)) {
+                return buildOfflineUser();
+            }
+            throw new IllegalArgumentException("当前为离线模式，请使用演示账号登录");
         }
-        // 历史明文密码在首次成功登录后自动升级为 BCrypt，减少一次性迁移成本。
-        upgradePasswordHashIfNeeded(login.getUserId(), rawPassword.trim(), login.getUserPassword());
-        return buildUserByLoginName(login.getUserName());
+
+        try {
+            UserLoginEntity login = getUserLoginByName(loginName);
+            if (login == null || !passwordMatches(password, login.getUserPassword())) {
+                throw new IllegalArgumentException("学号或密码错误");
+            }
+            // 历史明文密码在首次成功登录后自动升级为 BCrypt，减少一次性迁移成本。
+            upgradePasswordHashIfNeeded(login.getUserId(), password, login.getUserPassword());
+            return buildUserByLoginName(login.getUserName());
+        } catch (DataAccessException ex) {
+            // 数据库不可达时允许使用离线演示账号进入系统，便于本地联调页面。
+            if (isOfflineUserCredential(loginName, password)) {
+                return buildOfflineUser();
+            }
+            throw new IllegalArgumentException("数据库暂不可用，仅可使用离线演示账号登录");
+        }
     }
 
     public User findByStudentId(String studentId) {
-        return buildUserByLoginName(studentId);
+        if (forceOfflineUser) {
+            return isOfflineUserId(studentId) ? buildOfflineUser() : null;
+        }
+        try {
+            return buildUserByLoginName(studentId);
+        } catch (DataAccessException ex) {
+            return isOfflineUserId(studentId) ? buildOfflineUser() : null;
+        }
     }
 
     @Transactional
@@ -595,5 +633,40 @@ public class UserService {
                 encodePassword(rawPassword),
                 userId
         );
+    }
+
+    private boolean isOfflineUserId(String studentId) {
+        String value = trimToNull(studentId);
+        String offlineId = trimToNull(offlineStudentId);
+        return value != null && offlineId != null && offlineId.equals(value);
+    }
+
+    private boolean isOfflineUserCredential(String studentId, String password) {
+        String id = trimToNull(studentId);
+        String pwd = trimToNull(password);
+        String offlineId = trimToNull(offlineStudentId);
+        String offlinePwd = trimToNull(offlinePassword);
+        return id != null
+                && pwd != null
+                && offlineId != null
+                && offlinePwd != null
+                && offlineId.equals(id)
+                && offlinePwd.equals(pwd);
+    }
+
+    private User buildOfflineUser() {
+        User user = new User();
+        user.setId(0L);
+        user.setStudentId(trimToDefault(offlineStudentId, "20260001"));
+        user.setUsername(trimToDefault(offlineUsername, "离线演示账号"));
+        user.setPasswordHash(null);
+        user.setAvatarUrl(DEFAULT_AVATAR);
+        user.setPhone(DEFAULT_PHONE);
+        user.setEmail("offline-demo@local");
+        user.setBio("当前为离线演示模式，数据库恢复后将自动使用真实数据。");
+        LocalDateTime now = LocalDateTime.now();
+        user.setCreatedAt(now);
+        user.setUpdatedAt(now);
+        return user;
     }
 }

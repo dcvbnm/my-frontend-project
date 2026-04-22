@@ -2,6 +2,7 @@ package org.ershoupingtai.common.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -27,6 +28,9 @@ public class AuthTokenService {
     private final JwtUtil jwtUtil;
     private final StringRedisTemplate redisTemplate;
 
+    @Value("${app.offline-user.disable-token-store:true}")
+    private boolean disableTokenStore;
+
     public AuthTokenService(JwtUtil jwtUtil, StringRedisTemplate redisTemplate) {
         this.jwtUtil = jwtUtil;
         this.redisTemplate = redisTemplate;
@@ -42,6 +46,10 @@ public class AuthTokenService {
         bundle.setRefreshToken(jwtUtil.generateRefreshToken(userId, userName, refreshJti));
         bundle.setAccessExpiresIn(jwtUtil.getAccessExpireSeconds());
         bundle.setRefreshExpiresIn(jwtUtil.getRefreshExpireSeconds());
+
+        if (disableTokenStore) {
+            return bundle;
+        }
 
         redisTemplate.opsForValue().set(
                 refreshActiveKey(userId, normalizedDeviceId),
@@ -69,6 +77,13 @@ public class AuthTokenService {
             throw new IllegalArgumentException("refresh_token_invalid");
         }
 
+        String normalizedDeviceId = normalizeDeviceId(deviceId);
+        Object userNameValue = claims.get("userName");
+        String userName = userNameValue == null ? userId : String.valueOf(userNameValue);
+        if (disableTokenStore) {
+            return issueTokens(userId, userName, normalizedDeviceId);
+        }
+
         if (isRevokedUser(userId, claims.getIssuedAt())) {
             throw new IllegalArgumentException("token_revoked");
         }
@@ -77,7 +92,6 @@ public class AuthTokenService {
             throw new IllegalArgumentException("refresh_token_revoked");
         }
 
-        String normalizedDeviceId = normalizeDeviceId(deviceId);
         String activeRefreshJti = redisTemplate.opsForValue().get(refreshActiveKey(userId, normalizedDeviceId));
         if (!refreshJti.equals(activeRefreshJti)) {
             // 说明该设备已完成 refresh 轮换，旧 refresh token 禁止再次使用。
@@ -89,8 +103,6 @@ public class AuthTokenService {
             redisTemplate.opsForValue().set(refreshBlacklistKey(refreshJti), "1", ttlSeconds, TimeUnit.SECONDS);
         }
 
-        Object userNameValue = claims.get("userName");
-        String userName = userNameValue == null ? userId : String.valueOf(userNameValue);
         return issueTokens(userId, userName, normalizedDeviceId);
     }
 
@@ -112,7 +124,9 @@ public class AuthTokenService {
 
         Object jtiValue = claims.get("jti");
         String jti = jtiValue == null ? null : String.valueOf(jtiValue);
-        if (StringUtils.hasText(jti) && Boolean.TRUE.equals(redisTemplate.hasKey(accessBlacklistKey(jti)))) {
+        if (!disableTokenStore
+                && StringUtils.hasText(jti)
+                && Boolean.TRUE.equals(redisTemplate.hasKey(accessBlacklistKey(jti)))) {
             throw new IllegalArgumentException("token_revoked");
         }
 
@@ -130,7 +144,7 @@ public class AuthTokenService {
     }
 
     public void revokeAllDevices(String userId, String accessToken) {
-        if (!StringUtils.hasText(userId)) {
+        if (!StringUtils.hasText(userId) || disableTokenStore) {
             return;
         }
 
@@ -162,6 +176,9 @@ public class AuthTokenService {
     }
 
     private boolean isRevokedUser(String userId, Date issuedAt) {
+        if (disableTokenStore) {
+            return false;
+        }
         String revokeTime = redisTemplate.opsForValue().get(userRevokeKey(userId));
         if (!StringUtils.hasText(revokeTime)) {
             return false;
