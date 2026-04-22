@@ -11,6 +11,7 @@ const closeModalBtn = document.getElementById("closeModalBtn");
 const cancelBtn = document.getElementById("cancelBtn");
 const searchBtn = document.getElementById("searchBtn");
 const resetBtn = document.getElementById("resetBtn");
+const logoutBtn = document.getElementById("logoutBtn");
 
 const keywordInput = document.getElementById("keyword");
 const statusInput = document.getElementById("status");
@@ -340,6 +341,16 @@ searchBtn.addEventListener("click", loadGoods);
 resetBtn.addEventListener("click", resetSearch);
 goodsForm.addEventListener("submit", createOrUpdate);
 goodsTbody.addEventListener("click", handleTableClick);
+
+if (logoutBtn) {
+	logoutBtn.addEventListener("click", async () => {
+		try {
+			await fetch("/api/auth/logout", { method: "POST" });
+		} finally {
+			window.location.href = "/login";
+		}
+	});
+}
 
 goodsImageInput.addEventListener("change", async () => {
 	const file = goodsImageInput.files && goodsImageInput.files[0];

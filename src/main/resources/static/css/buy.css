@@ -1,0 +1,145 @@
+:root {
+    --bg: #f4f8ef;
+    --card: #ffffff;
+    --line: #d9e5d4;
+    --text: #243224;
+    --muted: #68776a;
+    --brand: #2f7d4f;
+    --brand-dark: #235f3d;
+    --price: #cf4824;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(circle at 12% 8%, rgba(72, 150, 96, 0.18), transparent 25%),
+        radial-gradient(circle at 90% 20%, rgba(184, 208, 164, 0.35), transparent 28%),
+        linear-gradient(180deg, #f9fcf5 0%, var(--bg) 100%);
+}
+
+.buy-shell {
+    width: min(1140px, calc(100% - 24px));
+    margin: 18px auto 30px;
+    display: grid;
+    gap: 14px;
+}
+
+.buy-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 12px 14px;
+}
+
+.back-link,
+.manage-link {
+    text-decoration: none;
+    color: var(--brand-dark);
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.buy-container {
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.88);
+    padding: 18px;
+}
+
+.buy-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 18px;
+}
+
+.main-image {
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: #e8efe3 center / cover no-repeat;
+    aspect-ratio: 4 / 3;
+}
+
+.buy-title {
+    margin: 0;
+    font-size: 30px;
+    line-height: 1.2;
+}
+
+.buy-price {
+    font-size: 34px;
+    font-weight: 800;
+    color: var(--price);
+    margin: 8px 0;
+}
+
+.buy-desc {
+    margin: 8px 0 14px;
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.info-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 8px;
+}
+
+.info-item {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.info-label {
+    color: var(--muted);
+}
+
+.buy-actions {
+    margin-top: 18px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.buy-btn {
+    border: 0;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f36d3d, #d44823);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 12px 22px;
+    cursor: pointer;
+}
+
+.buy-tip {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.loading,
+.error-box {
+    padding: 30px;
+    text-align: center;
+    color: var(--muted);
+}
+
+@media (max-width: 900px) {
+    .buy-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园二手平台 - 商品浏览</title>
+    <link rel="stylesheet" href="/css/browse.css?v=20260421">
+</head>
+<body>
+<div class="browse-shell">
+    <header class="browse-topbar">
+        <div class="brand-left">
+            <span class="brand-dot"></span>
+            <div>
+                <strong>Campus Trade Hub</strong>
+                <span>商品浏览广场</span>
+            </div>
+        </div>
+        <div class="top-actions">
+            <a class="btn ghost" href="/goods">管理后台</a>
+            <button id="logoutBtn" class="btn" type="button">退出登录</button>
+        </div>
+    </header>
+
+    <section class="filter-panel">
+        <div class="field">
+            <label for="keyword">关键词</label>
+            <input id="keyword" type="text" placeholder="商品名 / 描述 / 位置">
+        </div>
+        <div class="field">
+            <label for="goodsType">商品种类</label>
+            <select id="goodsType">
+                <option value="">全部</option>
+                <option value="1">电子数码</option>
+                <option value="2">书籍教材</option>
+                <option value="3">生活用品</option>
+                <option value="4">美妆服饰</option>
+                <option value="5">运动器材</option>
+                <option value="6">交通代步</option>
+                <option value="7">二次元/手办</option>
+                <option value="8">票务卡券</option>
+                <option value="9">虚拟物品</option>
+                <option value="10">食品零食</option>
+                <option value="0">其他</option>
+            </select>
+        </div>
+        <div class="field">
+            <label for="minPrice">最低价</label>
+            <input id="minPrice" type="number" min="0" step="0.01" placeholder="0">
+        </div>
+        <div class="field">
+            <label for="maxPrice">最高价</label>
+            <input id="maxPrice" type="number" min="0" step="0.01" placeholder="1000">
+        </div>
+        <div class="filter-actions">
+            <button id="searchBtn" class="btn" type="button">筛选</button>
+            <button id="resetBtn" class="btn ghost" type="button">重置</button>
+        </div>
+    </section>
+
+    <section class="result-head">
+        <h1>全部商品</h1>
+        <span id="countText" class="count-pill">0 件</span>
+    </section>
+
+    <section id="goodsGrid" class="goods-grid"></section>
+</div>
+
+<script src="/js/browse.js?v=20260421"></script>
+</body>
+</html>
