@@ -64,13 +64,12 @@ public class mywshandler extends TextWebSocketHandler {
             } else {
                 sb.setConversationId(wsService.getConversationId(userId, sellerId));
                 sb.setAuthorUserId(sellerId);
-                session.sendMessage(new TextMessage(wsService.getMessagesByConversationId(wsService.getConversationId(userId, sellerId))));
-                wsService.isRead(sb.getConversationId(), sb.getUserId());
+                session.sendMessage(new TextMessage(wsService.getHistoryMessages(wsService.getConversationId(userId, sellerId), userId)));
+                wsService.markConversationAsRead(sb.getConversationId(), sb.getUserId());
                 int authorUserId = sb.getAuthorUserId();
                 WebSocketSession authorSession = getSessionByAuthorUserId(authorUserId);
                 if (authorSession != null && authorSession.isOpen()) {
                     authorSession.sendMessage(new TextMessage(wsService.makeAllMessagesRead()));
-                    wsService.isRead(sb.getConversationId(), sb.getUserId());
                 }
                 System.out.println("会话已存在，ID: " + wsService.getConversationId(userId, sellerId));
             }
@@ -82,13 +81,13 @@ public class mywshandler extends TextWebSocketHandler {
                 sb.setConversationId(conversationId);
                 sb.setAuthorUserId(wsService.checkConversationAccess(conversationId, userId));
                 System.out.println("会话访问验证通过，ID: " + conversationId);
-                session.sendMessage(new TextMessage(wsService.getMessagesByConversationId(conversationId)));
-                wsService.isRead(conversationId, sb.getUserId());
+                session.sendMessage(new TextMessage(wsService.getHistoryMessages(conversationId, userId)));
+                wsService.markConversationAsRead(conversationId, sb.getUserId());
                 int authorUserId = sb.getAuthorUserId();
                 WebSocketSession authorSession = getSessionByAuthorUserId(authorUserId);
                 if (authorSession != null && authorSession.isOpen()) {
                     authorSession.sendMessage(new TextMessage(wsService.makeAllMessagesRead()));
-                    wsService.isRead(sb.getConversationId(), sb.getUserId());
+                    wsService.markConversationAsRead(sb.getConversationId(), sb.getUserId());
                 }
             } else {
                 System.out.println("会话访问验证失败，用户ID: " + userId + " 会话ID: " + conversationId);
@@ -109,12 +108,12 @@ public class mywshandler extends TextWebSocketHandler {
             } else {
                 sb.setConversationId(wsService.getConversationIdByUserIds(userId, authorUserId));
                 sb.setAuthorUserId(authorUserId);
-                session.sendMessage(new TextMessage(wsService.getMessagesByConversationId(wsService.getConversationIdByUserIds(userId, authorUserId))));
-                wsService.isRead(sb.getConversationId(), sb.getUserId());
+                session.sendMessage(new TextMessage(wsService.getHistoryMessages(wsService.getConversationIdByUserIds(userId, authorUserId), userId)));
+                wsService.markConversationAsRead(sb.getConversationId(), sb.getUserId());
                 WebSocketSession authorSession = getSessionByAuthorUserId(authorUserId);
                 if (authorSession != null && authorSession.isOpen()) {
                     authorSession.sendMessage(new TextMessage(wsService.makeAllMessagesRead()));
-                    wsService.isRead(sb.getConversationId(), sb.getUserId());
+                    wsService.markConversationAsRead(sb.getConversationId(), sb.getUserId());
                 }
                 System.out.println("会话已存在，ID: " + wsService.getConversationIdByUserIds(userId, authorUserId));
             }
@@ -128,7 +127,7 @@ public class mywshandler extends TextWebSocketHandler {
             if (otherSession != null && otherSession.isOpen()) {
                 otherSession.sendMessage(new TextMessage(json));
                 session.sendMessage(new TextMessage(wsService.ackMessage(msg.getId(), realId, true)));
-                wsService.updateMessageReadStatus(msg.getId(), sb.getAuthorUserId());
+                wsService.updateMessageReadStatus(realId, sb.getAuthorUserId());
             } else {
                 session.sendMessage(new TextMessage(wsService.ackMessage(msg.getId(), realId, false)));
                 wsService.unRead(sb.getConversationId(), sb.getAuthorUserId());

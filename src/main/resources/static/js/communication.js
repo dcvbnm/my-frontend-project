@@ -446,6 +446,15 @@
                 // 发送已读回执
                 ws.send(JSON.stringify({ type: 6, messageId: data.messageId, isread: true }));
             }
+            else if (data.type === 'all_read') {
+                // 对方已读了所有消息，更新状态
+                tradeMessages.forEach(msg => {
+                    if (!msg.isread) {
+                        msg.isread = true;
+                    }
+                });
+                renderTradeMessages();
+            }
             else if (data.type === 'typing') {
                 // 对方正在输入
                 showTyping(data.isTyping);

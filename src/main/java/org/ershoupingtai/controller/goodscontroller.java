@@ -31,9 +31,9 @@ import java.util.UUID;
 public class goodscontroller {
 	private static final String UPLOAD_DIR_NAME = "uploads";
 
-	private final goodsservice goodsService;
+	private final GoodsService goodsService;
 
-	public goodscontroller(goodsservice goodsService) {
+	public goodscontroller(GoodsService goodsService) {
 		this.goodsService = goodsService;
 	}
 

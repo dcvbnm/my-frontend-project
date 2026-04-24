@@ -1,6 +1,6 @@
 package org.ershoupingtai.service.adminService;
 
-import org.ershoupingtai.service.adminService.Orders;
+import org.ershoupingtai.pojo.Orders;
 import org.ershoupingtai.mapper.adminMapper.OrdersMapper;
 import org.springframework.stereotype.Service;
 

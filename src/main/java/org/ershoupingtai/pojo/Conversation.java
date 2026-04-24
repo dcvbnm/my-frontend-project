@@ -3,7 +3,7 @@ package org.ershoupingtai.pojo;
 import java.util.Date;
 
 public class Conversation {
-    private Long id;
+    private int id;
     private Integer userId1;
     private Integer userId2;
     private String lastMessage;
@@ -20,11 +20,11 @@ public class Conversation {
 
     public Conversation() {}
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

@@ -1,9 +1,9 @@
-package org.ershoupingtai.admin.mapper;
+package org.ershoupingtai.mapper.adminMapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-import org.ershoupingtai.admin.entity.Orders;
+import org.ershoupingtai.pojo.Orders;
 
 import java.math.BigDecimal;
 import java.util.List;

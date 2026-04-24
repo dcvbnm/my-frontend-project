@@ -1,6 +1,6 @@
 package org.ershoupingtai.controller;
 
-import com.ershoupingtai.common.Result;
+import org.ershoupingtai.common.Result;
 import org.ershoupingtai.config.LoginInterceptor;
 import org.ershoupingtai.service.userloginservice;
 import org.springframework.stereotype.Controller;

@@ -1,6 +1,6 @@
 package org.ershoupingtai.service.adminService;
 
-import org.ershoupingtai.service.adminService.UserInfo;
+import org.ershoupingtai.pojo.UserInfo;
 import org.ershoupingtai.mapper.adminMapper.UserInfoMapper;
 import org.ershoupingtai.mapper.adminMapper.UserLoginMapper;
 import org.springframework.stereotype.Service;
