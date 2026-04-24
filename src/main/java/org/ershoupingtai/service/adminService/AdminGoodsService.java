@@ -1,7 +1,7 @@
 package org.ershoupingtai.service.adminService;
 
 import org.ershoupingtai.pojo.Goods;
-import org.ershoupingtai.mapper.adminMapper.GoodsMapper;
+import org.ershoupingtai.mapper.adminMapper.AdminGoodsMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,9 +9,9 @@ import java.util.List;
 @Service
 public class AdminGoodsService {
 
-    private final GoodsMapper goodsMapper;
+    private final AdminGoodsMapper goodsMapper;
 
-    public AdminGoodsService(GoodsMapper goodsMapper) {
+    public AdminGoodsService(AdminGoodsMapper goodsMapper) {
         this.goodsMapper = goodsMapper;
     }
 

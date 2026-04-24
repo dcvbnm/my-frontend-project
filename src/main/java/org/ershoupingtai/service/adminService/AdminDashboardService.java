@@ -3,7 +3,7 @@ package org.ershoupingtai.service.adminService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.ershoupingtai.pojo.Goods;
 import org.ershoupingtai.mapper.adminMapper.GoodsCategoryMapper;
-import org.ershoupingtai.mapper.adminMapper.GoodsMapper;
+import org.ershoupingtai.mapper.adminMapper.AdminGoodsMapper;
 import org.ershoupingtai.mapper.adminMapper.OrdersMapper;
 import org.ershoupingtai.mapper.adminMapper.UserLoginMapper;
 import org.springframework.stereotype.Service;
@@ -15,12 +15,12 @@ import java.util.Map;
 public class AdminDashboardService {
 
     private final UserLoginMapper userLoginMapper;
-    private final GoodsMapper goodsMapper;
+    private final AdminGoodsMapper goodsMapper;
     private final OrdersMapper ordersMapper;
     private final GoodsCategoryMapper categoryMapper;
 
     public AdminDashboardService(UserLoginMapper userLoginMapper,
-                                 GoodsMapper goodsMapper,
+                                 AdminGoodsMapper goodsMapper,
                                  OrdersMapper ordersMapper,
                                  GoodsCategoryMapper categoryMapper) {
         this.userLoginMapper = userLoginMapper;

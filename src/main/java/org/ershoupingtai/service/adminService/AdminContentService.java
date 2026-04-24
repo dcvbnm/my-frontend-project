@@ -6,7 +6,7 @@ import org.ershoupingtai.pojo.Goods;
 import org.ershoupingtai.service.adminService.GoodsCategory;
 import org.ershoupingtai.mapper.adminMapper.AnnouncementMapper;
 import org.ershoupingtai.mapper.adminMapper.GoodsCategoryMapper;
-import org.ershoupingtai.mapper.adminMapper.GoodsMapper;
+import org.ershoupingtai.mapper.adminMapper.AdminGoodsMapper;
 import org.ershoupingtai.mapper.adminMapper.OrdersMapper;
 import org.ershoupingtai.mapper.adminMapper.UserLoginMapper;
 import org.springframework.stereotype.Service;
@@ -19,13 +19,13 @@ public class AdminContentService {
 
     private final AnnouncementMapper announcementMapper;
     private final GoodsCategoryMapper categoryMapper;
-    private final GoodsMapper goodsMapper;
+    private final AdminGoodsMapper goodsMapper;
     private final OrdersMapper ordersMapper;
     private final UserLoginMapper userLoginMapper;
 
     public AdminContentService(AnnouncementMapper announcementMapper,
                                GoodsCategoryMapper categoryMapper,
-                               GoodsMapper goodsMapper,
+                               AdminGoodsMapper goodsMapper,
                                OrdersMapper ordersMapper,
                                UserLoginMapper userLoginMapper) {
         this.announcementMapper = announcementMapper;

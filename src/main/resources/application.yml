@@ -1,18 +1,31 @@
+server:
+  port: 8081
+
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+  
   datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=设计;encrypt=false;trustServerCertificate=true;
+    url: jdbc:sqlserver://localhost:1433;databaseName=ershoupingtai;encrypt=false;trustServerCertificate=true
     username: sa
-    password: 123456
+    password: 204729
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  
   thymeleaf:
     cache: false
     prefix: classpath:/templates/
     suffix: .html
-  datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=LBW;encrypt=false;trustServerCertificate=true
-    username: sa
-    password: 123456
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+jwt:
+  secret: campus-trade-platform-secret-key-2024-spring-boot
+  issuer: campus-trade-platform
+  expiration: 86400000
+  refresh-expiration: 604800000
+  access-expire-seconds: 3600
+  refresh-expire-seconds: 604800
+  header: Authorization
+  prefix: Bearer
 
 admin:
   username: admin

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Mapper
-public interface GoodsMapper extends BaseMapper<Goods> {
+public interface AdminGoodsMapper extends BaseMapper<Goods> {
 
     @Select("SELECT g.*, u.UserName AS sellerName FROM Goods g LEFT JOIN UserLogin u ON g.UserId = u.UserId WHERE g.IsDeleted = 0 ORDER BY g.GoodsId DESC")
     List<Goods> findAllWithSeller();
