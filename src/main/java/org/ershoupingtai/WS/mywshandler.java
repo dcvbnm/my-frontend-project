@@ -25,8 +25,19 @@ public class mywshandler extends TextWebSocketHandler {
     // 处理WebSocket连接建立事件
     @Override
     public void afterConnectionEstablished(org.springframework.web.socket.WebSocketSession session) throws Exception {
-        int userId = (int) session.getAttributes().get("userId");
-        sessionbean sb = new sessionbean(session, userId, null, null);
+        // 从 URL 参数获取
+        String query = session.getUri().getQuery();
+        String userIdStr = null;
+        for (String param : query.split("&")) {
+            if (param.startsWith("UserId=")) {
+                userIdStr = param.substring(7);
+                break;
+            }
+        }
+        int userId = Integer.parseInt(userIdStr);
+        sessionbean sb = new sessionbean();
+        sb.setSession(session);
+        sb.setUserId(userId);
         sessionMap.put(session.getId(), sb);
         System.out.println("WebSocket连接已建立: " + session.getId());
     }

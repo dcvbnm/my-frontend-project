@@ -295,6 +295,38 @@ body.user-page.user-page-center .center-card {
     border: 1px solid #e5eee8;
 }
 
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.back-btn {
+    background: none;
+    border: 1px solid #e5eee8;
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.back-header {
+    text-align: left;
+    margin-bottom: 16px;
+}
+
 .stats-strip {
     margin-top: 14px;
     display: grid;

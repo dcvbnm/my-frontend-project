@@ -28,7 +28,7 @@ public class AuthTokenService {
     private final JwtUtil jwtUtil;
     private final StringRedisTemplate redisTemplate;
 
-    @Value("${app.offline-user.disable-token-store:true}")
+    @Value("${app.token-store.disable:true}")
     private boolean disableTokenStore;
 
     public AuthTokenService(JwtUtil jwtUtil, StringRedisTemplate redisTemplate) {

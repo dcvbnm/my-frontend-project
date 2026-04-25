@@ -46,6 +46,27 @@ body {
     gap: 10px;
 }
 
+.back-btn {
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand);
+}
+
 .brand-dot {
     width: 13px;
     height: 13px;
@@ -238,5 +259,264 @@ body {
 
     .filter-actions {
         grid-column: 1 / -1;
+    }
+}
+
+/* 新增样式 */
+.browse-header {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.search-bar {
+    flex: 1;
+    display: flex;
+    max-width: 400px;
+}
+
+.search-bar input {
+    flex: 1;
+    border: 1px solid var(--line);
+    border-radius: 10px 0 0 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    outline: none;
+}
+
+.search-bar input:focus {
+    border-color: var(--brand);
+}
+
+.search-btn {
+    border: 1px solid var(--brand);
+    border-left: none;
+    border-radius: 0 10px 10px 0;
+    background: var(--brand);
+    color: white;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.search-btn:hover {
+    background: var(--brand-dark);
+}
+
+.nav-menu {
+    display: flex;
+    gap: 24px;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+}
+
+.nav-menu a {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.nav-menu a:hover {
+    color: var(--brand);
+}
+
+.carousel {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    height: 300px;
+}
+
+.carousel-container {
+    position: relative;
+    height: 100%;
+}
+
+.carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.carousel-slide.active {
+    opacity: 1;
+}
+
+.carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.carousel-caption {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.carousel-caption h2 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+}
+
+.carousel-caption p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.carousel-indicators {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    display: flex;
+    gap: 8px;
+}
+
+.indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+}
+
+.indicator.active {
+    background: white;
+}
+
+.categories {
+    margin-bottom: 24px;
+}
+
+.categories h2 {
+    margin: 0 0 16px 0;
+    font-size: 20px;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+}
+
+.category-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.3s ease;
+}
+
+.category-item:hover {
+    border-color: var(--brand);
+    background: rgba(47, 125, 79, 0.05);
+}
+
+.category-icon {
+    font-size: 32px;
+}
+
+.category-item span {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.recommend-section,
+.all-goods-section {
+    margin-bottom: 24px;
+}
+
+.recommend-section h2,
+.all-goods-section h2 {
+    margin: 0 0 16px 0;
+    font-size: 20px;
+}
+
+.recommend-grid {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.section-header .filter-panel {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.section-header .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.section-header .field label {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.section-header .field input,
+.section-header .field select {
+    width: 120px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 14px;
+}
+
+.section-header .filter-actions {
+    display: flex;
+    gap: 8px;
+}
+
+@media (max-width: 768px) {
+    .header-top {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .search-bar {
+        max-width: none;
+    }
+
+    .nav-menu {
+        justify-content: center;
+    }
+
+    .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .recommend-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }

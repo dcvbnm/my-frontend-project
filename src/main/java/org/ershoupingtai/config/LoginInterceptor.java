@@ -9,24 +9,16 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
 
-    public static final String LOGIN_USER_KEY = "LOGIN_USER";
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        Object loginUser = request.getSession().getAttribute(LOGIN_USER_KEY);
-        if (loginUser != null) {
+        String uri = request.getRequestURI();
+        
+        // 放行所有页面请求，让前端 JS 处理登录验证
+        if (!uri.startsWith("/api/")) {
             return true;
         }
-
-        String uri = request.getRequestURI();
-        if (uri.startsWith("/api/")) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write("{\"code\":401,\"msg\":\"请先登录\",\"data\":null}");
-            return false;
-        }
-
-        response.sendRedirect("/login");
-        return false;
+        
+        // API 请求由 JwtInterceptor 处理，这里全部放行
+        return true;
     }
 }

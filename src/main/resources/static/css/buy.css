@@ -49,6 +49,23 @@ body {
     font-size: 14px;
 }
 
+.back-btn {
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text);
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand);
+}
+
 .buy-container {
     border-radius: 18px;
     border: 1px solid var(--line);
@@ -111,8 +128,77 @@ body {
 .buy-actions {
     margin-top: 18px;
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     align-items: center;
+}
+
+.chat-btn {
+    border: 0;
+    border-radius: 12px;
+    background: #2f7d4f;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 12px 22px;
+    cursor: pointer;
+}
+
+.comment-section {
+    margin-top: 28px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: #fcfffc;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.comment-header h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.comment-header span {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.comment-list {
+    display: grid;
+    gap: 12px;
+}
+
+.comment-item {
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: rgba(239, 249, 232, 0.9);
+    border: 1px solid rgba(47, 125, 79, 0.12);
+}
+
+.comment-item .comment-author {
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.comment-item .comment-text {
+    color: var(--text);
+    line-height: 1.7;
+}
+
+.comment-empty {
+    color: var(--muted);
+    padding: 20px 0;
+    text-align: center;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.8);
+    border: 1px dashed var(--line);
 }
 
 .buy-btn {

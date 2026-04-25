@@ -79,9 +79,11 @@
                 }
 
                 var userId = result.data.userId;
+                var studentId = result.data.studentId;
                 var userName = result.data.userName;
                 var userInfo = {
                     userId: `${userId}`,
+                    studentId: `${studentId}`,
                     userName: `${userName}`
                 };
 
@@ -89,7 +91,7 @@
                 localStorage.setItem('accessToken', result.data.accessToken);
                 localStorage.setItem('refreshToken', result.data.refreshToken);
                 localStorage.setItem('userInfo', JSON.stringify(userInfo));
-                window.location.href = '/user/center';
+                window.location.href = '/browse';
             }).catch(function () {
                 showError('请求失败，请稍后重试');
             });

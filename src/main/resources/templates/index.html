@@ -18,32 +18,14 @@
 		</div>
 		<div class="topbar-links">
 			<a href="/browse" class="switch-link">商品浏览</a>
-			<a href="#overview">概览</a>
-			<a href="#filters">筛选</a>
+			<a href="/user/center" class="switch-link">用户主页</a>
+				<a href="#filters">筛选</a>
 			<a href="#list">列表</a>
 			<a href="#editor">编辑</a>
 			<button id="logoutBtn" class="ghost-btn" type="button">退出登录</button>
 		</div>
 		<div class="topbar-note">LBW · Goods 表已完成适配</div>
 	</div>
-
-	<section class="quick-strip" id="overview">
-		<div class="strip-item">
-			<span>当前状态</span>
-			<strong>商品管理看板</strong>
-			<p>围绕校园二手交易场景优化后的首页。</p>
-		</div>
-		<div class="strip-item highlight">
-			<span>关键能力</span>
-			<strong>发布 / 编辑 / 上下架 / 软删除</strong>
-			<p>全部字段已和 LBW 库 Goods 表一一对应。</p>
-		</div>
-		<div class="strip-item">
-			<span>建议</span>
-			<strong>先补图片，再补描述</strong>
-			<p>商品信息越完整，展示和转化越自然。</p>
-		</div>
-	</section>
 
 	<header class="hero">
 		<div class="hero-copy">
@@ -82,24 +64,6 @@
 			</div>
 		</div>
 	</header>
-
-	<section class="overview-grid">
-		<div class="overview-card">
-			<span class="overview-label">管理建议</span>
-			<h3>先补图片，再补描述，最后再调价格</h3>
-			<p>这会让商品卡片在首页和后续交流页里更容易被点击。</p>
-		</div>
-		<div class="overview-card">
-			<span class="overview-label">字段状态</span>
-			<h3>已对齐 Goods 表</h3>
-			<p>商品图片、类型、数量、日期、保质期、位置、用户ID、上架状态都已接入。</p>
-		</div>
-		<div class="overview-card warning">
-			<span class="overview-label">删除策略</span>
-			<h3>采用软删除</h3>
-			<p>删除只会把 IsDeleted 置为 1，不会影响历史数据。</p>
-		</div>
-	</section>
 
 	<section class="search-panel" id="filters">
 		<div class="field-wrap">
@@ -188,7 +152,7 @@
 		<div class="modal-head">
 			<div>
 			<h3 id="modalTitle">新增商品</h3>
-			<p class="modal-subtitle">填写商品卡片的完整信息，保存后即可在列表中看到。</p>
+			<p class="modal-subtitle">填写商品卡片的完整信息，点击“确定”提交，或点击“取消”关闭表单。</p>
 			</div>
 			<button id="closeModalBtn" class="icon-btn" type="button">×</button>
 		</div>
@@ -263,9 +227,6 @@
 				</label>
 			</div>
 			<div class="grid-2">
-				<label>用户ID
-					<input id="userId" type="number" min="1" required placeholder="发布人ID">
-				</label>
 				<label>上下架状态
 					<select id="goodsStatus">
 						<option value="上架">上架</option>
@@ -276,7 +237,7 @@
 
 			<div class="form-actions">
 				<button type="button" id="cancelBtn" class="ghost-btn">取消</button>
-				<button type="submit" class="primary-btn">保存</button>
+				<button type="submit" class="primary-btn">确定</button>
 			</div>
 		</form>
 		</div>

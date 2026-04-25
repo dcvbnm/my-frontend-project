@@ -67,11 +67,18 @@ public class UserCenterApiController {
                                                 @RequestParam(required = false) String email,
                                                 @RequestParam(required = false) String deviceId) {
         try {
+            System.out.println("开始注册用户: " + studentId + ", 用户名: " + username);
             User user = userService.register(studentId, username, password, phone, email);
-            return Result.success(buildAuthPayload(user, deviceId));
+            System.out.println("用户注册成功: " + user.getStudentId());
+            Map<String, Object> result = buildAuthPayload(user, deviceId);
+            System.out.println("令牌生成成功");
+            return Result.success(result);
         } catch (IllegalArgumentException ex) {
+            System.out.println("业务异常: " + ex.getMessage());
             return Result.fail(ex.getMessage());
         } catch (Exception ex) {
+            System.out.println("系统异常: " + ex.getClass().getName() + " - " + ex.getMessage());
+            ex.printStackTrace();
             return Result.fail(ResultCode.SYSTEM_ERROR);
         }
     }
@@ -274,7 +281,8 @@ public class UserCenterApiController {
         payload.put("refreshToken", tokenBundle.getRefreshToken());
         payload.put("accessExpiresIn", tokenBundle.getAccessExpiresIn());
         payload.put("refreshExpiresIn", tokenBundle.getRefreshExpiresIn());
-        payload.put("userId", user.getStudentId());
+        payload.put("userId", user.getId());
+        payload.put("studentId", user.getStudentId());
         payload.put("userName", user.getUsername());
         return payload;
     }

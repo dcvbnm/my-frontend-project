@@ -817,11 +817,13 @@ td a:hover {
 
 .modal {
 	width: min(760px, 100%);
+	max-height: calc(100vh - 40px);
 	background: rgba(255, 255, 255, 0.94);
 	border-radius: 24px;
 	border: 1px solid var(--line);
 	padding: 22px;
 	box-shadow: var(--shadow);
+	overflow-y: auto;
 }
 
 .modal-head {
@@ -875,6 +877,11 @@ td a:hover {
 	justify-content: flex-end;
 	gap: 8px;
 	margin-top: 4px;
+	position: sticky;
+	bottom: 0;
+	padding: 14px 0 0;
+	background: rgba(255, 255, 255, 0.94);
+	backdrop-filter: blur(8px);
 }
 
 @media (max-width: 900px) {

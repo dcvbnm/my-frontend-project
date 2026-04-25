@@ -9,7 +9,6 @@ import org.ershoupingtai.pojo.user.UserGoodsView;
 import org.ershoupingtai.pojo.user.UserInfoEntity;
 import org.ershoupingtai.pojo.user.UserLoginEntity;
 import org.ershoupingtai.pojo.user.UserNotification;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -43,18 +42,6 @@ public class UserService {
     private final JdbcTemplate jdbcTemplate;
     private final Map<String, HashSet<Long>> readNotificationCache = new ConcurrentHashMap<>();
 
-    @Value("${app.offline-user.student-id:20260001}")
-    private String offlineStudentId;
-
-    @Value("${app.offline-user.password:123456}")
-    private String offlinePassword;
-
-    @Value("${app.offline-user.username:离线演示账号}")
-    private String offlineUsername;
-
-    @Value("${app.offline-user.force:true}")
-    private boolean forceOfflineUser;
-
     public UserService(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -75,8 +62,8 @@ public class UserService {
         }
     }
 
-    @Transactional
     public User register(String studentId, String username, String rawPassword, String phone, String email) {
+        System.out.println("UserService.register called with: " + studentId + ", " + username);
         validateRequired(studentId, "学号不能为空");
         validateRequired(rawPassword, "密码不能为空");
 
@@ -99,7 +86,11 @@ public class UserService {
             throw new IllegalArgumentException("密码长度不能超过 20");
         }
 
+        System.out.println("About to insert user login");
         Long userId = insertUserLogin(loginName, encodePassword(password));
+        System.out.println("User login inserted, userId: " + userId);
+
+        System.out.println("About to insert user info");
         jdbcTemplate.update(
                 "INSERT INTO dbo.UserInfo (UserId, Avatar, College, Campus, Phone, Address, Score, CreatDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 userId,
@@ -111,8 +102,12 @@ public class UserService {
                 100,
                 Date.valueOf(LocalDate.now())
         );
+        System.out.println("User info inserted");
 
-        return buildUserByLoginName(loginName);
+        System.out.println("About to build user");
+        User user = buildUserByLoginName(loginName);
+        System.out.println("User built successfully: " + user.getStudentId());
+        return user;
     }
 
     public User login(String studentId, String rawPassword) {
@@ -121,13 +116,6 @@ public class UserService {
 
         String loginName = studentId.trim();
         String password = rawPassword.trim();
-
-        if (forceOfflineUser) {
-            if (isOfflineUserCredential(loginName, password)) {
-                return buildOfflineUser();
-            }
-            throw new IllegalArgumentException("当前为离线模式，请使用演示账号登录");
-        }
 
         try {
             UserLoginEntity login = getUserLoginByName(loginName);
@@ -138,22 +126,15 @@ public class UserService {
             upgradePasswordHashIfNeeded(login.getUserId(), password, login.getUserPassword());
             return buildUserByLoginName(login.getUserName());
         } catch (DataAccessException ex) {
-            // 数据库不可达时允许使用离线演示账号进入系统，便于本地联调页面。
-            if (isOfflineUserCredential(loginName, password)) {
-                return buildOfflineUser();
-            }
-            throw new IllegalArgumentException("数据库暂不可用，仅可使用离线演示账号登录");
+            throw new IllegalArgumentException("数据库暂不可用，请稍后再试");
         }
     }
 
     public User findByStudentId(String studentId) {
-        if (forceOfflineUser) {
-            return isOfflineUserId(studentId) ? buildOfflineUser() : null;
-        }
         try {
             return buildUserByLoginName(studentId);
         } catch (DataAccessException ex) {
-            return isOfflineUserId(studentId) ? buildOfflineUser() : null;
+            return null;
         }
     }
 
@@ -635,38 +616,4 @@ public class UserService {
         );
     }
 
-    private boolean isOfflineUserId(String studentId) {
-        String value = trimToNull(studentId);
-        String offlineId = trimToNull(offlineStudentId);
-        return value != null && offlineId != null && offlineId.equals(value);
-    }
-
-    private boolean isOfflineUserCredential(String studentId, String password) {
-        String id = trimToNull(studentId);
-        String pwd = trimToNull(password);
-        String offlineId = trimToNull(offlineStudentId);
-        String offlinePwd = trimToNull(offlinePassword);
-        return id != null
-                && pwd != null
-                && offlineId != null
-                && offlinePwd != null
-                && offlineId.equals(id)
-                && offlinePwd.equals(pwd);
-    }
-
-    private User buildOfflineUser() {
-        User user = new User();
-        user.setId(0L);
-        user.setStudentId(trimToDefault(offlineStudentId, "20260001"));
-        user.setUsername(trimToDefault(offlineUsername, "离线演示账号"));
-        user.setPasswordHash(null);
-        user.setAvatarUrl(DEFAULT_AVATAR);
-        user.setPhone(DEFAULT_PHONE);
-        user.setEmail("offline-demo@local");
-        user.setBio("当前为离线演示模式，数据库恢复后将自动使用真实数据。");
-        LocalDateTime now = LocalDateTime.now();
-        user.setCreatedAt(now);
-        user.setUpdatedAt(now);
-        return user;
-    }
 }

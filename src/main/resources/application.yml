@@ -7,7 +7,7 @@ spring:
       - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
   
   datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=ershoupingtai;encrypt=false;trustServerCertificate=true
+    url: jdbc:sqlserver://localhost;instanceName=SQLEXPRESS;databaseName=ershoupingtai;encrypt=false;trustServerCertificate=true
     username: sa
     password: 204729
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver

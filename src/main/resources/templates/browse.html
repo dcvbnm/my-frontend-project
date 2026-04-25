@@ -8,62 +8,151 @@
 </head>
 <body>
 <div class="browse-shell">
-    <header class="browse-topbar">
-        <div class="brand-left">
-            <span class="brand-dot"></span>
-            <div>
-                <strong>Campus Trade Hub</strong>
-                <span>商品浏览广场</span>
+    <!-- 顶部导航 -->
+    <header class="browse-header">
+        <div class="header-top">
+            <div class="brand-left">
+                <button class="back-btn" onclick="history.back()" title="返回上一页">←</button>
+                <span class="brand-dot"></span>
+                <div>
+                    <strong>Campus Trade Hub</strong>
+                    <span>校园二手交易平台</span>
+                </div>
+            </div>
+            <div class="search-bar">
+                <input id="keyword" type="text" placeholder="搜索商品名、描述或位置">
+                <button id="searchBtn" class="search-btn">搜索</button>
+            </div>
+            <div class="top-actions">
+                <a class="btn ghost" href="/user/center">用户主页</a>
+                <a class="btn ghost" href="/goods">管理后台</a>
+                <button id="logoutBtn" class="btn" type="button">退出登录</button>
             </div>
         </div>
-        <div class="top-actions">
-            <a class="btn ghost" href="/goods">管理后台</a>
-            <button id="logoutBtn" class="btn" type="button">退出登录</button>
-        </div>
+        <nav class="nav-menu">
+            <a href="#home">首页</a>
+            <a href="#categories">分类</a>
+            <a href="#recommend">推荐</a>
+            <a href="#all">全部商品</a>
+        </nav>
     </header>
 
-    <section class="filter-panel">
-        <div class="field">
-            <label for="keyword">关键词</label>
-            <input id="keyword" type="text" placeholder="商品名 / 描述 / 位置">
+    <!-- 轮播图 -->
+    <section class="carousel">
+        <div class="carousel-container">
+            <div class="carousel-slide active">
+                <img src="/images/banner1.jpg" alt="校园二手交易" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIyMDBweCIgdmlld0JveD0iMCAwIDEwMDAgMjAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIyMDBweCIgZmlsbD0iI2Y0ZjdlZiIvPgo8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzIzMzAyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zNWVtIj7mlrDlpKrmiYDmnIgg5L2T5YWl5Lqk5piT5aW9PC90ZXh0Pgo8L3N2Zz4='">
+                <div class="carousel-caption">
+                    <h2>欢迎来到校园二手交易平台</h2>
+                    <p>发现优质二手商品，开启绿色校园生活</p>
+                </div>
+            </div>
+            <div class="carousel-slide">
+                <img src="/images/banner2.jpg" alt="热门商品" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIyMDBweCIgdmlld0JveD0iMCAwIDEwMDAgMjAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIyMDBweCIgZmlsbD0iI2Y0ZjdlZiIvPgo8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzIzMzAyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zNWVtIj7mtYvor5XmiYDmnIgg5L2T5YWl5Lqk5piT5aW9PC90ZXh0Pgo8L3N2Zz4='">
+                <div class="carousel-caption">
+                    <h2>热门推荐</h2>
+                    <p>精选优质商品，物美价廉</p>
+                </div>
+            </div>
         </div>
-        <div class="field">
-            <label for="goodsType">商品种类</label>
-            <select id="goodsType">
-                <option value="">全部</option>
-                <option value="1">电子数码</option>
-                <option value="2">书籍教材</option>
-                <option value="3">生活用品</option>
-                <option value="4">美妆服饰</option>
-                <option value="5">运动器材</option>
-                <option value="6">交通代步</option>
-                <option value="7">二次元/手办</option>
-                <option value="8">票务卡券</option>
-                <option value="9">虚拟物品</option>
-                <option value="10">食品零食</option>
-                <option value="0">其他</option>
-            </select>
-        </div>
-        <div class="field">
-            <label for="minPrice">最低价</label>
-            <input id="minPrice" type="number" min="0" step="0.01" placeholder="0">
-        </div>
-        <div class="field">
-            <label for="maxPrice">最高价</label>
-            <input id="maxPrice" type="number" min="0" step="0.01" placeholder="1000">
-        </div>
-        <div class="filter-actions">
-            <button id="searchBtn" class="btn" type="button">筛选</button>
-            <button id="resetBtn" class="btn ghost" type="button">重置</button>
+        <div class="carousel-indicators">
+            <span class="indicator active" data-slide="0"></span>
+            <span class="indicator" data-slide="1"></span>
         </div>
     </section>
 
-    <section class="result-head">
-        <h1>全部商品</h1>
+    <!-- 分类导航 -->
+    <section class="categories">
+        <h2>商品分类</h2>
+        <div class="category-grid">
+            <a href="#" class="category-item" data-type="1">
+                <div class="category-icon">📱</div>
+                <span>电子数码</span>
+            </a>
+            <a href="#" class="category-item" data-type="2">
+                <div class="category-icon">📚</div>
+                <span>书籍教材</span>
+            </a>
+            <a href="#" class="category-item" data-type="3">
+                <div class="category-icon">🏠</div>
+                <span>生活用品</span>
+            </a>
+            <a href="#" class="category-item" data-type="4">
+                <div class="category-icon">👗</div>
+                <span>美妆服饰</span>
+            </a>
+            <a href="#" class="category-item" data-type="5">
+                <div class="category-icon">⚽</div>
+                <span>运动器材</span>
+            </a>
+            <a href="#" class="category-item" data-type="6">
+                <div class="category-icon">🚲</div>
+                <span>交通代步</span>
+            </a>
+            <a href="#" class="category-item" data-type="7">
+                <div class="category-icon">🎮</div>
+                <span>二次元/手办</span>
+            </a>
+            <a href="#" class="category-item" data-type="8">
+                <div class="category-icon">🎫</div>
+                <span>票务卡券</span>
+            </a>
+            <a href="#" class="category-item" data-type="9">
+                <div class="category-icon">💻</div>
+                <span>虚拟物品</span>
+            </a>
+            <a href="#" class="category-item" data-type="10">
+                <div class="category-icon">🍎</div>
+                <span>食品零食</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 推荐商品 -->
+    <section class="recommend-section">
+        <h2>推荐商品</h2>
+        <div id="recommendGrid" class="goods-grid recommend-grid"></div>
+    </section>
+
+    <!-- 全部商品 -->
+    <section class="all-goods-section">
+        <div class="section-header">
+            <h2>全部商品</h2>
+            <div class="filter-panel">
+                <div class="field">
+                    <label for="goodsType">商品种类</label>
+                    <select id="goodsType">
+                        <option value="">全部</option>
+                        <option value="1">电子数码</option>
+                        <option value="2">书籍教材</option>
+                        <option value="3">生活用品</option>
+                        <option value="4">美妆服饰</option>
+                        <option value="5">运动器材</option>
+                        <option value="6">交通代步</option>
+                        <option value="7">二次元/手办</option>
+                        <option value="8">票务卡券</option>
+                        <option value="9">虚拟物品</option>
+                        <option value="10">食品零食</option>
+                        <option value="0">其他</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="minPrice">最低价</label>
+                    <input id="minPrice" type="number" min="0" step="0.01" placeholder="0">
+                </div>
+                <div class="field">
+                    <label for="maxPrice">最高价</label>
+                    <input id="maxPrice" type="number" min="0" step="0.01" placeholder="1000">
+                </div>
+                <div class="filter-actions">
+                    <button id="filterBtn" class="btn" type="button">筛选</button>
+                    <button id="resetBtn" class="btn ghost" type="button">重置</button>
+                </div>
+            </div>
+        </div>
         <span id="countText" class="count-pill">0 件</span>
+        <div id="goodsGrid" class="goods-grid"></div>
     </section>
-
-    <section id="goodsGrid" class="goods-grid"></section>
 </div>
 
 <script src="/js/browse.js?v=20260421"></script>

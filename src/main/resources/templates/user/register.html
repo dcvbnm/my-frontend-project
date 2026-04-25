@@ -9,6 +9,9 @@
 <body class="user-page">
 <div class="bg-layer"></div>
 <main class="card auth-card">
+    <div class="back-header">
+        <button class="back-btn" onclick="history.back()" title="返回上一页">← 返回</button>
+    </div>
     <h1>创建账号</h1>
     <p class="sub">加入校内二手交易平台</p>
 
@@ -77,9 +80,11 @@
                 }
 
                 var userId = result.data.userId;
+                var studentId = result.data.studentId;
                 var userName = result.data.userName;
                 var userInfo = {
                     userId: `${userId}`,
+                    studentId: `${studentId}`,
                     userName: `${userName}`
                 };
 

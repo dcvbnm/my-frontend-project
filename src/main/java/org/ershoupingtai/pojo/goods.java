@@ -48,6 +48,9 @@ public class Goods {
     @TableField("UserId")
     private Integer userId;
 
+    @TableField(exist = false)
+    private String sellerStudentId;
+
     @TableField("Stock")
     private Boolean stock;
 
@@ -148,6 +151,14 @@ public class Goods {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public String getSellerStudentId() {
+        return sellerStudentId;
+    }
+
+    public void setSellerStudentId(String sellerStudentId) {
+        this.sellerStudentId = sellerStudentId;
     }
 
     public Boolean getStock() {

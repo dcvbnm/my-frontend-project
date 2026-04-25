@@ -37,10 +37,23 @@ const goodsDate = document.getElementById("goodsDate");
 const shelflife = document.getElementById("shelflife");
 const noShelflife = document.getElementById("noShelflife");
 const goodsLocation = document.getElementById("goodsLocation");
-const userId = document.getElementById("userId");
 const goodsStatus = document.getElementById("goodsStatus");
 
 let selectedImageFile = null;
+
+// 获取当前登录用户ID
+function getCurrentUserId() {
+	const userInfo = localStorage.getItem('userInfo');
+	if (userInfo) {
+		try {
+			const user = JSON.parse(userInfo);
+			return user.userId;
+		} catch (e) {
+			console.error('解析用户信息失败:', e);
+		}
+	}
+	return null;
+}
 
 noShelflife.addEventListener("change", () => {
 	shelflife.disabled = noShelflife.checked;
@@ -142,7 +155,7 @@ function renderRows(list) {
 			<td>¥${item.goodsPrice ?? 0}</td>
 			<td>${item.goodsQuantity ?? 0}</td>
 			<td>${item.goodsDate ?? "-"}</td>
-			<td>${item.shelflife == null ? "无保质期" : item.shelflife + "天"}</td>
+			<td>${item.shelflife == null || item.shelflife === 0 ? "无保质期" : item.shelflife + "天"}</td>
 			<td>${item.goodsLocation ?? "-"}</td>
 			<td>${item.userId ?? "-"}</td>
 			<td><span class="${statusClass(item.stock ? "上架" : "下架")}">${item.stock ? "上架" : "下架"}</span></td>
@@ -194,7 +207,7 @@ function fillForm(item) {
 	goodsPrice.value = item.goodsPrice || "";
 	goodsQuantity.value = item.goodsQuantity || "";
 	goodsDate.value = item.goodsDate || "";
-	if (item.shelflife == null) {
+	if (item.shelflife == null || item.shelflife === 0) {
 		noShelflife.checked = true;
 		shelflife.value = "";
 		shelflife.disabled = true;
@@ -206,7 +219,6 @@ function fillForm(item) {
 		shelflife.setAttribute("required", "required");
 	}
 	goodsLocation.value = item.goodsLocation || "";
-	userId.value = item.userId || "";
 	goodsStatus.value = item.stock ? "上架" : "下架";
 }
 
@@ -233,6 +245,11 @@ function clearUploadField() {
 
 function getPayload() {
 	// 收集表单字段并与后端goods对象保持同名
+	const currentUserId = getCurrentUserId();
+	if (!currentUserId) {
+		throw new Error('无法获取当前用户ID，请重新登录');
+	}
+
 	return {
 		goodsImage: goodsImage.value.trim(),
 		goodsName: goodsName.value.trim(),
@@ -241,15 +258,22 @@ function getPayload() {
 		goodsPrice: Number(goodsPrice.value),
 		goodsQuantity: Number(goodsQuantity.value),
 		goodsDate: goodsDate.value,
-		shelflife: noShelflife.checked ? null : (shelflife.value === "" ? null : Number(shelflife.value)),
+		shelflife: noShelflife.checked ? 0 : (shelflife.value === "" ? 0 : Number(shelflife.value)),
 		goodsLocation: goodsLocation.value.trim(),
-		userId: Number(userId.value),
+		userId: currentUserId,
 		stock: goodsStatus.value === "上架"
 	};
 }
 
 async function createOrUpdate(e) {
 	e.preventDefault();
+
+	// 添加确认对话框
+	const isEdit = !!goodsId.value;
+	const actionText = isEdit ? "编辑" : "新增";
+	if (!confirm(`确认${actionText}该商品吗？`)) {
+		return;
+	}
 
 	if (selectedImageFile) {
 		try {

@@ -52,10 +52,7 @@ public class GoodsService {
 	}
 
 	public Goods getById(Long id) {
-		Goods item = goodsMapper.selectById(id);
-		if (item != null && Boolean.TRUE.equals(item.getIsDeleted())) {
-			return null;
-		}
+        Goods item = goodsMapper.selectByIdWithSellerStudentId(id);
 		return item;
 	}
 

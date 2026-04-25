@@ -16,7 +16,7 @@ public class mywsconfig implements org.springframework.web.socket.config.annotat
 
     @Override
     public void registerWebSocketHandlers(org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry registry) {
-        registry.addHandler(handler, "/api/chat")
+        registry.addHandler(handler, "/ws/chat")
                 .addInterceptors(interceptor)
                 .setAllowedOrigins("*");
     }

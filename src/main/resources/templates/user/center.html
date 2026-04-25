@@ -10,9 +10,12 @@
 <div class="bg-layer"></div>
 <main class="card center-card">
     <header class="header-row">
-        <div>
-            <h1>用户中心</h1>
-            <p id="welcomeText" class="sub">正在加载用户信息...</p>
+        <div class="header-left">
+            <button class="back-btn" onclick="history.back()" title="返回上一页">←</button>
+            <div>
+                <h1>用户中心</h1>
+                <p id="welcomeText" class="sub">正在加载用户信息...</p>
+            </div>
         </div>
         <button id="logoutBtn" type="button" class="btn ghost">退出登录</button>
     </header>
@@ -358,7 +361,8 @@
             renderNotifications(notifications);
 
             var userInfo = {
-                userId: user.studentId || '',
+                userId: user.id || '',
+                studentId: user.studentId || '',
                 userName: user.username || ''
             };
             localStorage.setItem('userInfo', JSON.stringify(userInfo));

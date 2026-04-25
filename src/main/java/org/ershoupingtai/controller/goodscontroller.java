@@ -74,6 +74,12 @@ public class goodscontroller {
 		return "buy";
 	}
 
+	@GetMapping("/communication")
+	public String communicationPage() {
+		// 买卖沟通页入口（模板：communication.html）
+		return "communication";
+	}
+
 	@ResponseBody
 	@GetMapping("/api/goods")
 	public Result<List<Goods>> list(
@@ -209,6 +215,7 @@ public class goodscontroller {
 				return Result.fail("商品所在地不能为空");
 			}
 		}
+		// 创建商品时必须验证用户ID，编辑时如果提供了userId也要验证
 		if (!allowPartialUpdate || item.getUserId() != null) {
 			if (item.getUserId() == null || item.getUserId() <= 0) {
 				return Result.fail("用户ID不能为空");

@@ -49,19 +49,35 @@ function renderGoods(item) {
                     <li class="info-item"><span class="info-label">发布日期</span><span>${item.goodsDate || "未知"}</span></li>
                     <li class="info-item"><span class="info-label">保质期</span><span>${shelflifeText}</span></li>
                     <li class="info-item"><span class="info-label">商品位置</span><span>${item.goodsLocation || "未知"}</span></li>
-                    <li class="info-item"><span class="info-label">卖家用户ID</span><span>${item.userId ?? "未知"}</span></li>
+                    <li class="info-item"><span class="info-label">卖家学号</span><span>${item.sellerStudentId || item.userId || "未知"}</span></li>
                     <li class="info-item"><span class="info-label">当前状态</span><span>${statusText}</span></li>
                     <li class="info-item"><span class="info-label">浏览次数</span><span>${item.views ?? 0}</span></li>
                 </ul>
 
                 <div class="buy-actions">
+                    <button id="chatBtn" class="chat-btn" type="button">聊天</button>
                     <button id="buyBtn" class="buy-btn" type="button">立即购买</button>
                     <span class="buy-tip">购买后流程由其他模块处理</span>
                 </div>
+                <section class="comment-section">
+                    <div class="comment-header">
+                        <h2>用户评论</h2>
+                        <span>暂无真实评论时显示占位信息</span>
+                    </div>
+                    <div id="commentList" class="comment-list">
+                        <div class="comment-empty">暂无评论，成为首个评论者吧。</div>
+                    </div>
+                </section>
             </div>
         </div>
     `;
 
+    const chatBtn = document.getElementById("chatBtn");
+    if (chatBtn) {
+        chatBtn.addEventListener("click", () => {
+            window.location.href = "/communication";
+        });
+    }
     const buyBtn = document.getElementById("buyBtn");
     if (buyBtn) {
         buyBtn.addEventListener("click", () => {
