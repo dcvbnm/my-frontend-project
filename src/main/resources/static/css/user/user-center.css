@@ -465,8 +465,7 @@ body.user-page.user-page-center .center-layout {
 }
 
 .address-item,
-.goods-item,
-.notice-item {
+.goods-item {
     border: 1px solid #e5ece4;
     border-radius: 12px;
     padding: 13px;
@@ -479,8 +478,7 @@ body.user-page.user-page-center .center-layout {
 }
 
 .address-item:hover,
-.goods-item:hover,
-.notice-item:hover {
+.goods-item:hover {
     transform: translateY(-1px);
     box-shadow: 0 10px 20px #23484012;
 }
@@ -620,8 +618,7 @@ body.user-page.user-page-center .center-layout {
     .avatar-grid,
     .two-col-panel,
     .address-item,
-    .goods-item,
-    .notice-item {
+    .goods-item {
         grid-template-columns: 1fr;
         display: grid;
     }

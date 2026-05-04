@@ -9,6 +9,11 @@
         .header a { color: #fff; margin-right: 18px; text-decoration: none; }
         .container { max-width: 1200px; margin: 28px auto; padding: 0 18px; }
         .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 0 24px rgba(0,0,0,0.06); }
+        .search-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 18px 0 8px; }
+        .search-bar select,
+        .search-bar input { padding: 10px 12px; border: 1px solid #d1d9e6; border-radius: 6px; }
+        .search-bar input { min-width: 220px; flex: 1; }
+        .search-bar button { background: #1976d2; }
         table { width: 100%; border-collapse: collapse; margin-top: 16px; }
         th, td { padding: 14px 12px; border-bottom: 1px solid #e8ecf3; text-align: left; }
         th { background: #f0f4fa; }
@@ -26,13 +31,22 @@
     <a th:href="@{/admin/goods}">商品管理</a>
     <a th:href="@{/admin/orders}">订单管理</a>
     <a th:href="@{/admin/announcements}">公告管理</a>
-    <a th:href="@{/admin/categories}">商品分类</a>
     <a th:href="@{/admin/statistics}">统计报表</a>
     <a th:href="@{/admin/logout}">退出登录</a>
 </div>
 <div class="container">
     <div class="card">
         <h1>商品管理</h1>
+        <form class="search-bar" th:action="@{/admin/goods}" method="get">
+            <select name="searchType">
+                <option value="goodsId" th:selected="${searchType == 'goodsId'}">商品ID</option>
+                <option value="goodsName" th:selected="${searchType == null || searchType == '' || searchType == 'goodsName'}">商品名称</option>
+                <option value="sellerId" th:selected="${searchType == 'sellerId'}">卖家ID</option>
+            </select>
+            <input type="text" name="keyword" placeholder="输入关键字" th:value="${keyword}">
+            <button type="submit">搜索</button>
+            <a th:href="@{/admin/goods}" style="padding:10px 16px; border-radius:6px; background:#6b7280; color:#fff; text-decoration:none;">重置</a>
+        </form>
         <table>
             <thead>
             <tr>
@@ -49,8 +63,8 @@
             <tr th:each="goods : ${goodsList}">
                 <td th:text="${goods.goodsId}"></td>
                 <td th:text="${goods.goodsName}"></td>
-                <td th:text="${goods.sellerName}"></td>
-                <td th:text="${goods.price}"></td>
+                <td th:text="${goods.sellerStudentId}"></td>
+                <td th:text="${goods.goodsPrice}"></td>
                 <td th:text="${goods.goodsQuantity}"></td>
                 <td th:text="${goods.stock ? '上架' : '下架'}"></td>
                 <td>

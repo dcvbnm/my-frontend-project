@@ -16,7 +16,6 @@ public class User {
     private List<UserAddress> addresses = new ArrayList<>();
     private List<UserGoodsView> publishedGoods = new ArrayList<>();
     private List<UserGoodsView> favoriteGoods = new ArrayList<>();
-    private List<UserNotification> notifications = new ArrayList<>();
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -106,14 +105,6 @@ public class User {
 
     public void setFavoriteGoods(List<UserGoodsView> favoriteGoods) {
         this.favoriteGoods = favoriteGoods;
-    }
-
-    public List<UserNotification> getNotifications() {
-        return notifications;
-    }
-
-    public void setNotifications(List<UserNotification> notifications) {
-        this.notifications = notifications;
     }
 
     public LocalDateTime getCreatedAt() {

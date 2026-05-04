@@ -36,9 +36,11 @@ public class WsService {
      * 创建新会话
      */
     public int insertConversation(int userId, int authorUserId) {
+        int firstUserId = Math.min(userId, authorUserId);
+        int secondUserId = Math.max(userId, authorUserId);
         Conversation conversation = new Conversation();
-        conversation.setUserId1(userId);
-        conversation.setUserId2(authorUserId);
+        conversation.setUserId1(firstUserId);
+        conversation.setUserId2(secondUserId);
         conversation.setLastMessage("");
         conversation.setLastMessageTime(new Date());
         conversation.setUnreadCount1(0);
@@ -116,13 +118,17 @@ public class WsService {
         msg.setSenderId(senderId);
         msg.setCreatedAt(new Date());
         msg.setTimeStr(timeFormat.format(new Date()));
+        if (msg.getMessageType() == null) {
+            msg.setMessageType(1);
+        }
         
         // 获取接收者ID
         Conversation conversation = getConversationById(conversationId);
-        if (conversation != null) {
-            int receiverId = conversation.getUserId1() == senderId ? conversation.getUserId2() : conversation.getUserId1();
-            msg.setReceiverId(receiverId);
+        if (conversation == null) {
+            throw new IllegalStateException("会话不存在: " + conversationId);
         }
+        int receiverId = conversation.getUserId1() == senderId ? conversation.getUserId2() : conversation.getUserId1();
+        msg.setReceiverId(receiverId);
         
         // 更新会话最后消息
         updateConversationLastMessage(conversationId, msg.getContent(), senderId);
@@ -160,7 +166,7 @@ public class WsService {
             result.put("type", "ack");
             result.put("tempId", msgId);
             result.put("realId", realId);
-            result.put("isread", false);
+            result.put("isread", delivered);
             return mapper.writeValueAsString(result);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -174,12 +180,12 @@ public class WsService {
     public String makeAllMessagesRead() {
         try {
             Map<String, Object> result = new HashMap<>();
-            result.put("type", "typing");
+            result.put("type", "all_read");
             result.put("status", "success");
             return mapper.writeValueAsString(result);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return "{\"type\":\"typing\",\"status\":\"success\"}";
+            return "{\"type\":\"all_read\",\"status\":\"success\"}";
         }
     }
 

@@ -11,6 +11,9 @@ import java.util.List;
 @Mapper
 public interface OrdersMapper extends BaseMapper<Orders> {
 
+    @Select("SELECT COUNT(*) FROM dbo.Orders")
+    Long countAllOrders();
+
     @Select("SELECT o.*, b.UserName AS buyerName, s.UserName AS sellerName, g.GoodsName AS goodsName " +
             "FROM Orders o " +
             "LEFT JOIN UserLogin b ON o.BuyerId = b.UserId " +

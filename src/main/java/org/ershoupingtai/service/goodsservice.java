@@ -19,12 +19,15 @@ public class GoodsService {
 		this.goodsMapper = goodsMapper;
 	}
 
-	public List<Goods> listGoods(String keyword, String status, Integer goodsType, BigDecimal minPrice, BigDecimal maxPrice) {
+	public List<Goods> listGoods(String keyword, String status, Integer goodsType, BigDecimal minPrice, BigDecimal maxPrice, Integer userId) {
 		// 使用LambdaQueryWrapper拼接动态查询条件
 		LambdaQueryWrapper<Goods> wrapper = new LambdaQueryWrapper<>();
 		// 只查询未删除商品；兼容老数据中 IsDeleted 为空的情况
 		wrapper.and(w -> w.eq(Goods::getIsDeleted, false).or().isNull(Goods::getIsDeleted))
 				.orderByDesc(Goods::getGoodsId);
+		if (userId != null) {
+			wrapper.eq(Goods::getUserId, userId);
+		}
 
 		if (StringUtils.hasText(keyword)) {
 			wrapper.and(w -> w.like(Goods::getGoodsName, keyword)

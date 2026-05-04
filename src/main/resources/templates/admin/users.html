@@ -12,7 +12,10 @@
         table { width: 100%; border-collapse: collapse; margin-top: 16px; }
         th, td { padding: 14px 12px; border-bottom: 1px solid #e8ecf3; text-align: left; }
         th { background: #f0f4fa; }
-        button { border: none; padding: 8px 14px; border-radius: 6px; background: #d32f2f; color: #fff; cursor: pointer; }
+        .action-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        button, .action-link { border: none; padding: 8px 14px; border-radius: 6px; color: #fff; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+        button { background: #d32f2f; }
+        .chat-btn { background: #1976d2; }
     </style>
 </head>
 <body>
@@ -23,7 +26,6 @@
     <a th:href="@{/admin/goods}">商品管理</a>
     <a th:href="@{/admin/orders}">订单管理</a>
     <a th:href="@{/admin/announcements}">公告管理</a>
-    <a th:href="@{/admin/categories}">商品分类</a>
     <a th:href="@{/admin/statistics}">统计报表</a>
     <a th:href="@{/admin/logout}">退出登录</a>
 </div>
@@ -55,10 +57,13 @@
                 <td th:text="${user.score}"></td>
                 <td th:text="${#dates.format(user.creatDate, 'yyyy-MM-dd')}"></td>
                 <td>
-                    <form th:action="@{/admin/users/delete}" method="post" style="display:inline">
-                        <input type="hidden" name="id" th:value="${user.userId}">
-                        <button type="submit" onclick="return confirm('确认删除该用户吗？');">删除</button>
-                    </form>
+                    <div class="action-group">
+                        <a class="action-link chat-btn" th:href="@{/communication(userId=${user.userId},chatId='000000')}">聊天</a>
+                        <form th:action="@{/admin/users/delete}" method="post" style="display:inline">
+                            <input type="hidden" name="id" th:value="${user.userId}">
+                            <button type="submit" onclick="return confirm('确认删除该用户吗？');">删除</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             </tbody>

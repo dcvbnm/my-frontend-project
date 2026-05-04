@@ -1,0 +1,224 @@
+:root {
+    --bg: #f4f7ef;
+    --card: #ffffff;
+    --line: #dfe6d6;
+    --text: #233020;
+    --muted: #647260;
+    --brand: #2f7d4f;
+    --brand-dark: #245f3c;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    color: var(--text);
+    font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+    background:
+        radial-gradient(circle at 10% 5%, rgba(76, 150, 96, 0.16), transparent 25%),
+        radial-gradient(circle at 90% 10%, rgba(180, 210, 165, 0.35), transparent 28%),
+        linear-gradient(180deg, #f9fcf4 0%, var(--bg) 100%);
+    min-height: 100vh;
+}
+
+.chat-list-shell {
+    width: min(920px, calc(100% - 24px));
+    margin: 20px auto 32px;
+    display: grid;
+    gap: 14px;
+}
+
+.chat-list-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px 16px;
+}
+
+.brand-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.back-btn {
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand);
+}
+
+.brand-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand), #88c097);
+    box-shadow: 0 0 0 5px rgba(47, 125, 79, 0.18);
+}
+
+.brand-left strong {
+    display: block;
+    font-size: 15px;
+}
+
+.brand-left span {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.top-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn.ghost {
+    background: #ffffff;
+    color: var(--brand-dark);
+    border: 1px solid var(--line);
+}
+
+.chat-list-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-list-head h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.count-pill {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #ebf3e7;
+    color: var(--brand-dark);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.chat-list {
+    display: grid;
+    gap: 10px;
+}
+
+.chat-item {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--card);
+    padding: 14px;
+    display: grid;
+    gap: 8px;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(35, 60, 42, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.chat-item:hover {
+    transform: translateY(-2px);
+    border-color: #b7ccb6;
+    box-shadow: 0 12px 26px rgba(35, 60, 42, 0.14);
+}
+
+.chat-item-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.chat-user {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.chat-time {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.chat-message {
+    margin: 0;
+    color: #3c4c39;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chat-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.unread-pill {
+    min-width: 22px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #d94f1d;
+    color: #fff;
+    text-align: center;
+    font-weight: 700;
+}
+
+.empty-box {
+    border-radius: 14px;
+    padding: 28px;
+    text-align: center;
+    color: var(--muted);
+    border: 1px dashed var(--line);
+    background: rgba(255, 255, 255, 0.65);
+}
+
+@media (max-width: 768px) {
+    .chat-list-topbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .top-actions {
+        width: 100%;
+    }
+
+    .btn {
+        flex: 1;
+        text-align: center;
+    }
+}

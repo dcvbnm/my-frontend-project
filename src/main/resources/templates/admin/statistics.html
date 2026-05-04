@@ -22,48 +22,30 @@
     <a th:href="@{/admin/goods}">商品管理</a>
     <a th:href="@{/admin/orders}">订单管理</a>
     <a th:href="@{/admin/announcements}">公告管理</a>
-    <a th:href="@{/admin/categories}">商品分类</a>
     <a th:href="@{/admin/statistics}">统计报表</a>
     <a th:href="@{/admin/logout}">退出登录</a>
 </div>
 <div class="container">
-    <div class="card">
-        <h1>统计报表</h1>
-        <div class="grid">
-            <div class="grid-item">
-                <h2>活跃用户</h2>
-                <p th:text="${activeUserCount}">0</p>
-            </div>
-            <div class="grid-item">
-                <h2>商品总数</h2>
-                <p th:text="${goodsCount}">0</p>
-            </div>
-            <div class="grid-item">
-                <h2>订单总数</h2>
-                <p th:text="${orderCount}">0</p>
-            </div>
-            <div class="grid-item">
-                <h2>销售总额</h2>
-                <p th:text="${totalSales}">0.00</p>
-            </div>
-        </div>
-    </div>
         <div class="card">
-            <h2>热门分类</h2>
-            <table style="width:100%; border-collapse: collapse; margin-top: 16px;">
-                <thead>
-                <tr>
-                    <th style="padding:12px; background:#f0f4fa; text-align:left;">分类</th>
-                    <th style="padding:12px; background:#f0f4fa; text-align:left;">商品数量</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="category : ${topCategories}">
-                    <td style="padding:12px; border-bottom:1px solid #e8ecf3;" th:text="${category.categoryName}"></td>
-                    <td style="padding:12px; border-bottom:1px solid #e8ecf3;" th:text="${category.goodsCount}"></td>
-                </tr>
-                </tbody>
-            </table>
+            <h1>统计报表</h1>
+            <div class="grid">
+                <div class="grid-item">
+                    <h2>活跃用户</h2>
+                    <p th:text="${activeUserCount}">0</p>
+                </div>
+                <div class="grid-item">
+                    <h2>商品总数</h2>
+                    <p th:text="${goodsCount}">0</p>
+                </div>
+                <div class="grid-item">
+                    <h2>订单总数</h2>
+                    <p th:text="${orderCount}">0</p>
+                </div>
+                <div class="grid-item">
+                    <h2>销售总额</h2>
+                    <p th:text="${totalSales}">0.00</p>
+                </div>
+            </div>
         </div>
 </div>
 </body>

@@ -36,10 +36,6 @@
             <p class="stat-label">我的收藏</p>
             <p id="statFavorite" class="stat-value">0</p>
         </article>
-        <article class="stat-card">
-            <p class="stat-label">未读通知</p>
-            <p id="statUnread" class="stat-value">0</p>
-        </article>
     </section>
 
     <div class="center-layout">
@@ -50,7 +46,6 @@
             <button class="nav-item" type="button" data-target="pane-address">收货地址</button>
             <button class="nav-item" type="button" data-target="pane-published">我发布的商品</button>
             <button class="nav-item" type="button" data-target="pane-favorite">我的收藏</button>
-            <button class="nav-item" type="button" data-target="pane-notice">消息通知</button>
         </aside>
 
         <div class="content-stage">
@@ -137,12 +132,6 @@
                 <h2>我的收藏</h2>
                 <div id="favoriteEmpty" class="list-grid" style="display:none">暂无收藏内容</div>
                 <div id="favoriteList"></div>
-            </section>
-
-            <section class="panel tab-pane" id="pane-notice">
-                <h2>消息通知</h2>
-                <div id="noticeEmpty" class="list-grid" style="display:none">暂无系统消息</div>
-                <div id="noticeList"></div>
             </section>
         </div>
     </div>
@@ -307,33 +296,6 @@
             });
         }
 
-        function renderNotifications(notifications) {
-            var listEl = document.getElementById('noticeList');
-            var emptyEl = document.getElementById('noticeEmpty');
-            listEl.innerHTML = '';
-            if (!notifications || notifications.length === 0) {
-                emptyEl.style.display = 'block';
-                return;
-            }
-            emptyEl.style.display = 'none';
-
-            notifications.forEach(function (n) {
-                var item = document.createElement('article');
-                item.className = 'notice-item';
-                var action = n.read
-                    ? ''
-                    : '<button class="btn ghost" data-action="read-notification" data-id="' + n.id + '" type="button">标记已读</button>';
-                item.innerHTML =
-                    '<div>' +
-                    '<strong>' + (n.title || '-') + '</strong>' +
-                    (n.read ? '<span class="tag muted">已读</span>' : '<span class="tag">未读</span>') +
-                    '<p>' + (n.content || '-') + '</p>' +
-                    '<p class="sub">' + (n.createdAt || '') + '</p>' +
-                    '</div>' + action;
-                listEl.appendChild(item);
-            });
-        }
-
         function renderUser(user) {
             document.getElementById('welcomeText').textContent =
                 '欢迎你，' + (user.username || '-') + '（学号：' + (user.studentId || '-') + '）';
@@ -348,17 +310,14 @@
             var addresses = user.addresses || [];
             var publishedGoods = user.publishedGoods || [];
             var favoriteGoods = user.favoriteGoods || [];
-            var notifications = user.notifications || [];
 
             document.getElementById('statAddress').textContent = addresses.length;
             document.getElementById('statPublished').textContent = publishedGoods.length;
             document.getElementById('statFavorite').textContent = favoriteGoods.length;
-            document.getElementById('statUnread').textContent = notifications.filter(function (item) { return !item.read; }).length;
 
             renderAddresses(addresses);
             renderGoods('publishedList', 'publishedEmpty', publishedGoods);
             renderGoods('favoriteList', 'favoriteEmpty', favoriteGoods);
-            renderNotifications(notifications);
 
             var userInfo = {
                 userId: user.id || '',
@@ -479,21 +438,6 @@
                     }
                 });
             }
-        });
-
-        document.getElementById('noticeList').addEventListener('click', function (e) {
-            var action = e.target.getAttribute('data-action');
-            var id = e.target.getAttribute('data-id');
-            if (action !== 'read-notification' || !id) {
-                return;
-            }
-            var formData = new FormData();
-            formData.append('notificationId', id);
-            postForm('/api/user/center/notification/read', formData, '消息已标记为已读').then(function (result) {
-                if (result) {
-                    refreshSummary();
-                }
-            });
         });
 
         document.getElementById('logoutBtn').addEventListener('click', function () {

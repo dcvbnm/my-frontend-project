@@ -36,25 +36,6 @@ public class AdminContentController {
         return "redirect:/admin/announcements";
     }
 
-    @GetMapping("/admin/categories")
-    public String categories(Model model) {
-        model.addAttribute("categories", adminContentService.getCategories());
-        return "admin/categories";
-    }
-
-    @PostMapping("/admin/categories/add")
-    public String addCategory(@RequestParam("name") String name,
-                              @RequestParam(value = "description", required = false) String description) {
-        adminContentService.addCategory(name, description);
-        return "redirect:/admin/categories";
-    }
-
-    @PostMapping("/admin/categories/delete")
-    public String deleteCategory(@RequestParam("id") Integer id) {
-        adminContentService.deleteCategory(id);
-        return "redirect:/admin/categories";
-    }
-
     @GetMapping("/admin/statistics")
     public String statistics(Model model) {
         model.addAllAttributes(adminContentService.getStatistics());

@@ -1,6 +1,5 @@
 package org.ershoupingtai.WS;
 
-import java.net.http.WebSocket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -53,16 +52,27 @@ public class mywshandler extends TextWebSocketHandler {
     @Override
     public void handleTextMessage(org.springframework.web.socket.WebSocketSession session, org.springframework.web.socket.TextMessage message) throws Exception {
         sessionbean sb = sessionMap.get(session.getId());
-        String payload = message.getPayload();        
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> data = mapper.readValue(payload, Map.class);
+        if (sb == null) {
+            return;
+        }
 
-        int type = (int) data.get("type");
-        
-        if (type == 1) {
+        try {
+            String payload = message.getPayload();
+            Map<String, Object> data = mapper.readValue(payload, Map.class);
+            Object typeObj = data.get("type");
+            if (!(typeObj instanceof Number)) {
+                return;
+            }
+
+            int type = ((Number) typeObj).intValue();
+
+            if (type == 1) {
             //场景1：与商家的对话
-            int sellerId = (int) data.get("senderId");
-            int userId = (int) data.get("currentUserId");
+            Integer sellerId = readInt(data, "senderId", "sellerId");
+            Integer userId = readInt(data, "currentUserId", "userId");
+            if (sellerId == null || userId == null) {
+                return;
+            }
             if (wsService.getConversationId(userId, sellerId) == -1) {
                 int conversationId = wsService.insertConversation(userId, sellerId);
                 if (conversationId != -1) {
@@ -84,10 +94,13 @@ public class mywshandler extends TextWebSocketHandler {
                 }
                 System.out.println("会话已存在，ID: " + wsService.getConversationId(userId, sellerId));
             }
-        } else if (type == 2) {
+            } else if (type == 2) {
             //场景2：从消息列表进入，打开指定会话
-            int userId = (int) data.get("currentUserId");
-            int conversationId = (int) data.get("conversationId");
+            Integer userId = readInt(data, "currentUserId", "userId");
+            Integer conversationId = readInt(data, "conversationId");
+            if (userId == null || conversationId == null) {
+                return;
+            }
             if (wsService.checkConversationAccess(conversationId, userId) != -1) {
                 sb.setConversationId(conversationId);
                 sb.setAuthorUserId(wsService.checkConversationAccess(conversationId, userId));
@@ -103,10 +116,13 @@ public class mywshandler extends TextWebSocketHandler {
             } else {
                 System.out.println("会话访问验证失败，用户ID: " + userId + " 会话ID: " + conversationId);
             }
-        } else if (type == 3) {
+            } else if (type == 3) {
             //场景3：与指定用户聊天
-            int userId = (int) data.get("currentUserId");
-            int authorUserId = (int) data.get("authorUserId");
+            Integer userId = readInt(data, "currentUserId", "userId");
+            Integer authorUserId = readInt(data, "authorUserId", "userId");
+            if (userId == null || authorUserId == null) {
+                return;
+            }
             if (wsService.getConversationIdByUserIds(userId, authorUserId) == -1) {
                 int conversationId = wsService.insertConversation(userId, authorUserId);
                 if (conversationId != -1) {
@@ -128,24 +144,55 @@ public class mywshandler extends TextWebSocketHandler {
                 }
                 System.out.println("会话已存在，ID: " + wsService.getConversationIdByUserIds(userId, authorUserId));
             }
-        } else if(type == 4) {
+            } else if(type == 4) {
             //场景4：发送消息
             System.out.println("收到消息: " + data + " 来自会话: " + session.getId());
-            Messages msg = mapper.convertValue(data.get("message"), Messages.class);
-            int realId = wsService.addMessage(sb.getConversationId(), sb.getAuthorUserId(), msg);
-            String json = wsService.insertMessage(msg, realId);
-            WebSocketSession otherSession = getSessionByAuthorUserId(sb.getAuthorUserId());
-            if (otherSession != null && otherSession.isOpen()) {
-                otherSession.sendMessage(new TextMessage(json));
-                session.sendMessage(new TextMessage(wsService.ackMessage(msg.getId(), realId, true)));
-                wsService.updateMessageReadStatus(realId, sb.getAuthorUserId());
-            } else {
-                session.sendMessage(new TextMessage(wsService.ackMessage(msg.getId(), realId, false)));
-                wsService.unRead(sb.getConversationId(), sb.getAuthorUserId());
+
+            if (data.get("conversationId") instanceof Number) {
+                sb.setConversationId(((Number) data.get("conversationId")).intValue());
             }
-        } else if(type == 5) {
+
+            Messages msg;
+            if (data.get("message") != null) {
+                msg = mapper.convertValue(data.get("message"), Messages.class);
+            } else {
+                msg = new Messages();
+                if (data.get("messageId") instanceof Number) {
+                    msg.setId(((Number) data.get("messageId")).intValue());
+                }
+                msg.setContent((String) data.get("content"));
+                msg.setTimeStr((String) data.get("timeStr"));
+            }
+
+            if (sb.getConversationId() == null || sb.getAuthorUserId() == null || msg.getContent() == null) {
+                return;
+            }
+
+            // Preserve client temp ID before insertMessage mutates msg.id to DB real ID.
+            int clientTempId = msg.getId();
+            int realId = wsService.addMessage(sb.getConversationId(), sb.getUserId(), msg);
+            String json = wsService.insertMessage(msg, realId);
+            sessionbean receiverSb = getSessionBeanByUserId(sb.getAuthorUserId());
+            WebSocketSession otherSession = receiverSb != null ? receiverSb.getSession() : null;
+            boolean receiverOnline = otherSession != null && otherSession.isOpen();
+            boolean receiverInSameConversation = receiverOnline
+                    && receiverSb.getConversationId() != null
+                    && sb.getConversationId().equals(receiverSb.getConversationId());
+
+            if (receiverOnline) {
+                otherSession.sendMessage(new TextMessage(json));
+            }
+
+            if (receiverInSameConversation) {
+                wsService.updateMessageReadStatus(realId, sb.getAuthorUserId());
+                session.sendMessage(new TextMessage(wsService.ackMessage(clientTempId, realId, true)));
+            } else {
+                wsService.unRead(sb.getConversationId(), sb.getAuthorUserId());
+                session.sendMessage(new TextMessage(wsService.ackMessage(clientTempId, realId, false)));
+            }
+            } else if(type == 5) {
             //场景5：正在输入
-            boolean isTyping = (boolean) data.get("isTyping");
+            boolean isTyping = Boolean.TRUE.equals(data.get("isTyping"));
             WebSocketSession otherSession = getSessionByAuthorUserId(sb.getAuthorUserId());
             if (otherSession != null && otherSession.isOpen()) {
                 Map<String, Object> typingData = Map.of(
@@ -155,6 +202,22 @@ public class mywshandler extends TextWebSocketHandler {
                 String json = mapper.writeValueAsString(typingData);
                 otherSession.sendMessage(new TextMessage(json));
             }
+            } else if (type == 6) {
+            //场景6：已读回执
+            Integer readMessageId = readInt(data, "messageId");
+            if (readMessageId != null) {
+                wsService.updateMessageReadStatus(readMessageId, sb.getUserId());
+            }
+            if (sb.getConversationId() != null) {
+                wsService.markConversationAsRead(sb.getConversationId(), sb.getUserId());
+            }
+            WebSocketSession otherSession = getSessionByAuthorUserId(sb.getAuthorUserId());
+            if (otherSession != null && otherSession.isOpen()) {
+                otherSession.sendMessage(new TextMessage(wsService.makeAllMessagesRead()));
+            }
+            }
+        } catch (Exception e) {
+            System.out.println("WebSocket消息处理异常: " + e.getMessage());
         }
     }
 
@@ -164,8 +227,35 @@ public class mywshandler extends TextWebSocketHandler {
         if (authorUserId == null) return null;
         
         for (sessionbean sb : sessionMap.values()) {
-            if (sb.getAuthorUserId() == authorUserId) {
+            if (authorUserId.equals(sb.getUserId())) {
                 return sb.getSession();
+            }
+        }
+        return null;
+    }
+
+    private sessionbean getSessionBeanByUserId(Integer userId) {
+        if (userId == null) return null;
+
+        for (sessionbean sb : sessionMap.values()) {
+            if (userId.equals(sb.getUserId())) {
+                return sb;
+            }
+        }
+        return null;
+    }
+
+    private Integer readInt(Map<String, Object> data, String... keys) {
+        for (String key : keys) {
+            Object value = data.get(key);
+            if (value instanceof Number) {
+                return ((Number) value).intValue();
+            }
+            if (value instanceof String) {
+                try {
+                    return Integer.parseInt((String) value);
+                } catch (NumberFormatException ignored) {
+                }
             }
         }
         return null;

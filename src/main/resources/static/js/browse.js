@@ -68,6 +68,7 @@ document.querySelectorAll('.category-item').forEach(item => {
 
 function buildQuery() {
     const params = new URLSearchParams();
+    params.append("status", "上架");
     if (keywordInput.value.trim()) {
         params.append("keyword", keywordInput.value.trim());
     }
@@ -140,7 +141,7 @@ async function loadGoods() {
 async function loadRecommend() {
     try {
         // 加载推荐商品（前8个）
-        const list = await api('/api/goods');
+        const list = await api('/api/goods?status=上架');
         renderGoods(list, recommendGrid, 8);
     } catch (err) {
         recommendGrid.innerHTML = `<div class="empty-box">加载失败：${err.message}</div>`;

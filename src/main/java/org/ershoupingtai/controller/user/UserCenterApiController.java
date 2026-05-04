@@ -223,22 +223,6 @@ public class UserCenterApiController {
         }
     }
 
-    @PostMapping("/center/notification/read")
-    public Result<User> readNotification(@RequestParam Long notificationId) {
-        String studentId = UserContext.getUserId();
-        if (studentId == null) {
-            return Result.fail("请先登录");
-        }
-        try {
-            User user = userService.markNotificationRead(studentId, notificationId);
-            return Result.success(user);
-        } catch (IllegalArgumentException ex) {
-            return Result.fail(ex.getMessage());
-        } catch (Exception ex) {
-            return Result.fail(ResultCode.SYSTEM_ERROR);
-        }
-    }
-
     @PostMapping("/center/avatar")
     public Result<User> uploadAvatar(@RequestParam("avatar") MultipartFile avatar) {
         String studentId = UserContext.getUserId();

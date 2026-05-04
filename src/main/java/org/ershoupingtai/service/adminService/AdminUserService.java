@@ -23,7 +23,7 @@ public class AdminUserService {
     }
 
     public void deleteUser(Integer id) {
-        userInfoMapper.deleteById(id);
-        userLoginMapper.deleteById(id);
+        userInfoMapper.deleteByUserId(id);
+        userLoginMapper.deleteByUserId(id);
     }
 }

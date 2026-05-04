@@ -1,18 +1,43 @@
 package org.ershoupingtai.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
+@TableName("Orders")
 public class Orders {
+    @TableId(value = "OrderId", type = IdType.AUTO)
     private Integer orderId;
+    
+    @TableField("BuyerId")
     private Integer buyerId;
+
+    @TableField("SellerId")
     private Integer sellerId;
+
+    @TableField("GoodsId")
     private Integer goodsId;
+
+    @TableField("Price")
     private BigDecimal price;
+
+    @TableField("PurchaseQuantity")
     private Integer purchaseQuantity;
+
+    @TableField("TotalPrice")
     private BigDecimal totalPrice;
+
+    @TableField("IsPaid")
     private Boolean isPaid;
+
+    @TableField("OrderTime")
     private Date orderTime;
+
+    @TableField("IsReceived")
     private Boolean isReceived;
 
     public Orders() {}

@@ -2,8 +2,13 @@ package org.ershoupingtai.controller;
 
 import org.ershoupingtai.common.Result;
 import org.ershoupingtai.common.ResultCode;
+import org.ershoupingtai.common.security.AuthTokenService;
+import org.ershoupingtai.common.security.UserContext;
 import org.ershoupingtai.pojo.Goods;
+import org.ershoupingtai.pojo.PurchaseRequest;
+import org.ershoupingtai.pojo.PurchaseResult;
 import org.ershoupingtai.service.GoodsService;
+import org.ershoupingtai.service.OrderPurchaseService;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -30,11 +36,19 @@ import java.util.UUID;
 @Controller
 public class goodscontroller {
 	private static final String UPLOAD_DIR_NAME = "uploads";
+	private static final String AUTH_HEADER = "Authorization";
+	private static final String BEARER_PREFIX = "Bearer ";
 
 	private final GoodsService goodsService;
+	private final OrderPurchaseService orderPurchaseService;
+	private final AuthTokenService authTokenService;
 
-	public goodscontroller(GoodsService goodsService) {
+	public goodscontroller(GoodsService goodsService,
+						  OrderPurchaseService orderPurchaseService,
+						  AuthTokenService authTokenService) {
 		this.goodsService = goodsService;
+		this.orderPurchaseService = orderPurchaseService;
+		this.authTokenService = authTokenService;
 	}
 
 	@ResponseBody
@@ -87,10 +101,14 @@ public class goodscontroller {
 			@RequestParam(required = false) String status,
 			@RequestParam(required = false) Integer goodsType,
 			@RequestParam(required = false) BigDecimal minPrice,
-			@RequestParam(required = false) BigDecimal maxPrice
+			@RequestParam(required = false) BigDecimal maxPrice,
+			@RequestParam(required = false) Integer userId
 	) {
 		// 支持按关键词、状态、分类、价格区间筛选
-		return Result.success(goodsService.listGoods(keyword, status, goodsType, minPrice, maxPrice));
+		if (userId == null && !StringUtils.hasText(status)) {
+			status = "上架";
+		}
+		return Result.success(goodsService.listGoods(keyword, status, goodsType, minPrice, maxPrice, userId));
 	}
 
 	@ResponseBody
@@ -129,6 +147,42 @@ public class goodscontroller {
 	@DeleteMapping("/api/goods/{id}")
 	public Result<Void> delete(@PathVariable Long id) {
 		return goodsService.delete(id) ? Result.success() : Result.fail(ResultCode.DATA_NOT_FOUND);
+	}
+
+	@ResponseBody
+	@PostMapping("/api/goods/{id}/purchase")
+	public Result<PurchaseResult> purchase(@PathVariable Long id,
+										   @RequestBody PurchaseRequest request,
+										   HttpServletRequest httpRequest) {
+			String studentId = resolveCurrentStudentId(httpRequest);
+			if (studentId == null) {
+			return Result.fail("请先登录");
+		}
+		try {
+			return Result.success(orderPurchaseService.purchase(studentId, id, request == null ? null : request.getQuantity()));
+		} catch (IllegalArgumentException ex) {
+			return Result.fail(ex.getMessage());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return Result.fail(ResultCode.SYSTEM_ERROR);
+		}
+	}
+
+	private String resolveCurrentStudentId(HttpServletRequest request) {
+		String studentId = UserContext.getUserId();
+		if (studentId != null) {
+			return studentId;
+		}
+		String authHeader = request.getHeader(AUTH_HEADER);
+		if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
+			return null;
+		}
+		String token = authHeader.substring(BEARER_PREFIX.length()).trim();
+		try {
+			return authTokenService.validateAccessToken(token).getSubject();
+		} catch (Exception ex) {
+			return null;
+		}
 	}
 
 	@ResponseBody

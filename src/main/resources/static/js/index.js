@@ -40,19 +40,41 @@ const goodsLocation = document.getElementById("goodsLocation");
 const goodsStatus = document.getElementById("goodsStatus");
 
 let selectedImageFile = null;
+let currentUserId = null;
+let currentGoodsList = [];
 
-// 获取当前登录用户ID
-function getCurrentUserId() {
-	const userInfo = localStorage.getItem('userInfo');
-	if (userInfo) {
-		try {
-			const user = JSON.parse(userInfo);
-			return user.userId;
-		} catch (e) {
-			console.error('解析用户信息失败:', e);
-		}
+// 获取当前登录用户ID：优先取后端会话返回值，避免 localStorage 中残留旧账号
+async function getCurrentUserId() {
+	if (currentUserId !== null) {
+		return currentUserId;
 	}
-	return null;
+
+	const token = localStorage.getItem('accessToken');
+	if (!token) {
+		return null;
+	}
+
+	try {
+		const response = await fetch('/api/user/center/summary', {
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${token}`
+			}
+		});
+		const result = await response.json();
+		if (result.code !== 200 || !result.data) {
+			return null;
+		}
+		const parsed = Number.parseInt(result.data.id, 10);
+		if (Number.isNaN(parsed)) {
+			return null;
+		}
+		currentUserId = parsed;
+		return currentUserId;
+	} catch (e) {
+		console.error('获取当前用户失败:', e);
+		return null;
+	}
 }
 
 noShelflife.addEventListener("change", () => {
@@ -137,6 +159,7 @@ function statusClass(status) {
 }
 
 function renderRows(list) {
+	currentGoodsList = Array.isArray(list) ? list : [];
 	countText.textContent = `${list.length} 条`;
 	totalCount.textContent = list.length;
 	saleCount.textContent = list.filter(item => item.stock).length;
@@ -175,7 +198,14 @@ function renderRows(list) {
 async function loadGoods() {
 	// 刷新列表入口：初始化、查询后、增删改后都复用这里
 	try {
-		const list = await api(`/api/goods${buildQuery()}`);
+		const currentUserId = await getCurrentUserId();
+		if (currentUserId === null) {
+			window.location.href = '/user/login';
+			return;
+		}
+		const query = buildQuery();
+		const separator = query ? '&' : '?';
+		const list = await api(`/api/goods${query}${separator}userId=${encodeURIComponent(currentUserId)}`);
 		renderRows(list);
 	} catch (e) {
 		alert(e.message);
@@ -204,9 +234,9 @@ function fillForm(item) {
 	goodsName.value = item.goodsName || "";
 	goodsType.value = item.goodsType ?? "0";
 	goodsDesc.value = item.goodsDesc || "";
-	goodsPrice.value = item.goodsPrice || "";
-	goodsQuantity.value = item.goodsQuantity || "";
-	goodsDate.value = item.goodsDate || "";
+	goodsPrice.value = item.goodsPrice ?? "";
+	goodsQuantity.value = item.goodsQuantity ?? "";
+	goodsDate.value = normalizeDateForInput(item.goodsDate);
 	if (item.shelflife == null || item.shelflife === 0) {
 		noShelflife.checked = true;
 		shelflife.value = "";
@@ -220,6 +250,26 @@ function fillForm(item) {
 	}
 	goodsLocation.value = item.goodsLocation || "";
 	goodsStatus.value = item.stock ? "上架" : "下架";
+}
+
+function normalizeDateForInput(rawDate) {
+	if (!rawDate) {
+		return "";
+	}
+	if (typeof rawDate === "string") {
+		const compact = rawDate.slice(0, 10).replace(/\//g, "-");
+		if (/^\d{4}-\d{2}-\d{2}$/.test(compact)) {
+			return compact;
+		}
+	}
+	const parsed = new Date(rawDate);
+	if (Number.isNaN(parsed.getTime())) {
+		return "";
+	}
+	const year = parsed.getFullYear();
+	const month = String(parsed.getMonth() + 1).padStart(2, "0");
+	const day = String(parsed.getDate()).padStart(2, "0");
+	return `${year}-${month}-${day}`;
 }
 
 function refreshUploadPreview(imageUrl, nameText) {
@@ -245,7 +295,6 @@ function clearUploadField() {
 
 function getPayload() {
 	// 收集表单字段并与后端goods对象保持同名
-	const currentUserId = getCurrentUserId();
 	if (!currentUserId) {
 		throw new Error('无法获取当前用户ID，请重新登录');
 	}
@@ -320,8 +369,14 @@ async function handleTableClick(e) {
 
 	try {
 		if (action === "edit") {
+			const cachedItem = currentGoodsList.find(item => String(item.goodsId) === String(id));
+			if (cachedItem) {
+				fillForm(cachedItem);
+				openModal(true);
+			}
+
 			const item = await api(`/api/goods/${id}`);
-			fillForm(item);
+			fillForm({ ...(cachedItem || {}), ...(item || {}) });
 			openModal(true);
 			return;
 		}

@@ -16,7 +16,11 @@ public class AdminGoodsService {
     }
 
     public List<Goods> getGoodsList() {
-        return goodsMapper.findAllWithSeller();
+        return goodsMapper.searchGoods(null, null, null);
+    }
+
+    public List<Goods> searchGoods(Integer goodsId, String goodsName, Integer sellerId) {
+        return goodsMapper.searchGoods(goodsId, goodsName, sellerId);
     }
 
     public void updateGoodsStock(Integer id, boolean stock) {

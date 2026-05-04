@@ -8,7 +8,6 @@ import org.ershoupingtai.pojo.user.UserAddress;
 import org.ershoupingtai.pojo.user.UserGoodsView;
 import org.ershoupingtai.pojo.user.UserInfoEntity;
 import org.ershoupingtai.pojo.user.UserLoginEntity;
-import org.ershoupingtai.pojo.user.UserNotification;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -26,21 +25,18 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class UserService {
     private static final String DEFAULT_TEXT = "未填写";
     private static final String DEFAULT_PHONE = "13800000000";
     private static final String DEFAULT_AVATAR = "/images/default-avatar.png";
+    private static final String ADMIN_STUDENT_ID = "1111111111";
     // 保留单实例编码器，统一用于注册/登录/改密。
     private static final BCryptPasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     private final JdbcTemplate jdbcTemplate;
-    private final Map<String, HashSet<Long>> readNotificationCache = new ConcurrentHashMap<>();
 
     public UserService(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -59,6 +55,23 @@ public class UserService {
             }
         } catch (DataAccessException ex) {
             // 数据库初始化失败不阻断启动，避免影响其他模块开发。
+        }
+    }
+
+    @PostConstruct
+    public void initAdminUser() {
+        try {
+            Integer count = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(1) FROM dbo.UserLogin WHERE UserName = ?",
+                    Integer.class,
+                    ADMIN_STUDENT_ID
+            );
+            if (count == null || count == 0) {
+                register(ADMIN_STUDENT_ID, "管理员", "123456", DEFAULT_PHONE, null);
+            }
+        } catch (Exception ex) {
+            // 管理员种子数据失败不阻断启动，但后续订单通知会依赖这个账号。
+            System.out.println("管理员账号初始化失败: " + ex.getMessage());
         }
     }
 
@@ -225,20 +238,6 @@ public class UserService {
         return buildUserByLoginName(login.getUserName());
     }
 
-    public User markNotificationRead(String studentId, Long notificationId) {
-        User user = buildUserByLoginName(studentId);
-        if (user == null) {
-            throw new IllegalArgumentException("用户不存在");
-        }
-        readNotificationCache.computeIfAbsent(studentId, key -> new HashSet<>()).add(notificationId);
-        user.getNotifications().forEach(item -> {
-            if (notificationId.equals(item.getId())) {
-                item.setRead(true);
-            }
-        });
-        return user;
-    }
-
     @Transactional
     public void changePassword(String studentId, String oldPassword, String newPassword) {
         UserLoginEntity login = getUserLoginByName(studentId);
@@ -288,7 +287,6 @@ public class UserService {
         user.setAddresses(buildAddresses(user, info));
         user.setPublishedGoods(loadPublishedGoods(login.getUserId()));
         user.setFavoriteGoods(loadFavoriteGoods(login.getUserId()));
-        user.setNotifications(loadNotifications(login.getUserId(), login.getUserName()));
         return user;
     }
 
@@ -460,56 +458,6 @@ public class UserService {
             list.add(item);
         }
         return list;
-    }
-
-    private List<UserNotification> loadNotifications(Long userId, String loginName) {
-        List<UserNotification> list = new ArrayList<>();
-        for (OrderEntity order : getOrdersByUser(userId)) {
-            GoodsEntity goods = getGoodsById(order.getGoodsId());
-            String goodsName = goods == null ? "商品" : trimToDefault(goods.getGoodsName(), "商品");
-
-            UserNotification notification = new UserNotification();
-            notification.setId(order.getOrderId());
-            notification.setTitle("订单提醒");
-            notification.setContent(buildOrderMessage(order, goodsName, order.getBuyerId() == userId));
-            notification.setCreatedAt(order.getOrderTime());
-            notification.setRead(false);
-            list.add(notification);
-        }
-
-        HashSet<Long> readIds = readNotificationCache.computeIfAbsent(loginName, key -> new HashSet<>());
-        list.forEach(item -> item.setRead(readIds.contains(item.getId())));
-
-        if (list.isEmpty()) {
-            UserNotification sample = new UserNotification();
-            sample.setId(1L);
-            sample.setTitle("系统消息");
-            sample.setContent("当前暂无订单通知，开始发布或购买商品后会在这里展示消息。");
-            sample.setRead(true);
-            sample.setCreatedAt(LocalDateTime.now());
-            list.add(sample);
-        }
-        return list;
-    }
-
-    private String buildOrderMessage(OrderEntity order, String goodsName, boolean isBuyer) {
-        if (isBuyer) {
-            if (Boolean.TRUE.equals(order.getIsReceived())) {
-                return "订单#" + order.getOrderId() + "（" + goodsName + "）已确认收货。";
-            }
-            if (Boolean.TRUE.equals(order.getIsPaid())) {
-                return "订单#" + order.getOrderId() + "（" + goodsName + "）已支付，等待收货。";
-            }
-            return "订单#" + order.getOrderId() + "（" + goodsName + "）已创建，请尽快完成支付。";
-        }
-
-        if (Boolean.TRUE.equals(order.getIsReceived())) {
-            return "订单#" + order.getOrderId() + "（" + goodsName + "）买家已确认收货。";
-        }
-        if (Boolean.TRUE.equals(order.getIsPaid())) {
-            return "订单#" + order.getOrderId() + "（" + goodsName + "）买家已支付，请尽快发货。";
-        }
-        return "订单#" + order.getOrderId() + "（" + goodsName + "）有新的交易请求。";
     }
 
     private boolean existsLoginName(String loginName) {

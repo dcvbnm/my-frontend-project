@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园二手平台 - 聊天列表</title>
+    <link rel="stylesheet" href="/css/chat-list.css?v=20260426">
+</head>
+<body>
+<div class="chat-list-shell">
+    <header class="chat-list-topbar">
+        <div class="brand-left">
+            <button class="back-btn" onclick="history.back()" title="返回上一页">←</button>
+            <span class="brand-dot"></span>
+            <div>
+                <strong>Campus Trade Hub</strong>
+                <span>会话列表</span>
+            </div>
+        </div>
+        <div class="top-actions">
+            <a class="btn ghost" href="/browse">商品浏览</a>
+            <a class="btn" href="/browse">去商品页发起聊天</a>
+        </div>
+    </header>
+
+    <section class="chat-list-head">
+        <h1>全部聊天</h1>
+        <span id="chatCount" class="count-pill">0 个会话</span>
+    </section>
+
+    <section id="chatList" class="chat-list"></section>
+</div>
+
+<script src="/js/chat-list.js?v=20260426"></script>
+</body>
+</html>

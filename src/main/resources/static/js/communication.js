@@ -2,7 +2,7 @@
 let tradeMessages = [];
 let ws = null;
 let pendingMessages = new Map();
-let nextMessageId = 1;
+let nextMessageId = -1;
 let idMapping = new Map();
 let reverseMapping = new Map();
 let messageId = 0;
@@ -45,7 +45,8 @@ function isAtBottom() {
 }
 
 function generateMessageId() {
-    return Date.now() * 1000 + nextMessageId++;
+    // Use negative, int-safe temporary IDs so Java backend int parsing won't overflow.
+    return nextMessageId--;
 }
 
 // 检查 WebSocket 是否可用
@@ -62,7 +63,7 @@ function startTimeoutCheck(msgId) {
             renderTradeMessages();
             console.log(`消息 ${msgId} 发送超时`);
         }
-    }, 10000);
+    }, 8000);
 }
 
 // 重发消息
@@ -71,6 +72,7 @@ function resendMessage(msgId) {
     if (message && message.content && isWebSocketOpen()) {
         message.status = 'sending';
         message.retryCount = (message.retryCount || 0) + 1;
+        pendingMessages.set(msgId, message);
         ws.send(JSON.stringify({
             type: 4,
             conversationId: parseInt(conversationId),
@@ -97,7 +99,10 @@ function renderTradeMessages() {
     tradeMessages.forEach(msg => {
         const rowDiv = document.createElement('div');
         rowDiv.setAttribute('data-message-id', msg.id);
-        if (parseInt(msg.sender) === parseInt(currentUserId)) {
+        const isMine = typeof msg.isMine === 'boolean'
+            ? msg.isMine
+            : parseInt(msg.sender) === parseInt(currentUserId);
+        if (isMine) {
             rowDiv.className = 'message-row my';
         } else {
             rowDiv.className = 'message-row author';
@@ -110,8 +115,18 @@ function renderTradeMessages() {
         const timeSpan = document.createElement('span');
         timeSpan.innerText = msg.timeStr || getCurrentTime();
         const statusSpan = document.createElement('span');
-        statusSpan.innerText = msg.isread ? '已读' : (msg.status === 'sending' ? '发送中...' : '已送达');
-        statusSpan.style.color = msg.status === 'sending' ? '#999' : '#4CAF50';
+        if (msg.status === 'failed') {
+            statusSpan.innerText = '发送失败（点此重发）';
+            statusSpan.style.color = '#F44336';
+            statusSpan.style.cursor = 'pointer';
+            statusSpan.onclick = () => resendMessage(msg.id);
+        } else if (msg.status === 'sending') {
+            statusSpan.innerText = '发送中...';
+            statusSpan.style.color = '#999';
+        } else {
+            statusSpan.innerText = msg.isread ? '已读' : '已送达';
+            statusSpan.style.color = '#4CAF50';
+        }
         metaDiv.appendChild(timeSpan);
         metaDiv.appendChild(statusSpan);
         bubbleDiv.appendChild(metaDiv);
@@ -147,7 +162,7 @@ function updateMessageStatusById(msgId, newStatus, isread = false) {
             pendingMessages.delete(msgId);
         }
     } else if (newStatus === 'failed') {
-        statusSpan.innerText = '发送失败';
+        statusSpan.innerText = '发送失败（点此重发）';
         statusSpan.style.color = '#F44336';
         statusSpan.style.cursor = 'pointer';
         statusSpan.onclick = () => resendMessage(msgId);
@@ -157,6 +172,7 @@ function updateMessageStatusById(msgId, newStatus, isread = false) {
 
 function sendMessage(newMessage) {
     tradeMessages.push(newMessage);
+    pendingMessages.set(newMessage.id, newMessage);
     renderTradeMessages();
     
     if (isWebSocketOpen()) {
@@ -175,9 +191,12 @@ function sendMessage(newMessage) {
 }
 
 function receiveAndRenderNewMessage(data) {
+    const senderId = data.sender ?? data.senderId;
     tradeMessages.push({
         id: data.realId || data.messageId,
-        sender: data.sender,
+        sender: senderId,
+        // new_message is pushed by server to the peer side, so it should render as the other party.
+        isMine: false,
         content: data.content,
         timeStr: data.timeStr,
         status: 'sent',
@@ -243,12 +262,12 @@ function connectWebSocket() {
             const userId = urlParams.get('userId');
             
             if (sellerId) {
-                ws.send(JSON.stringify({type: 1, userId: parseInt(currentUserId), sellerId: parseInt(sellerId)}));
+                ws.send(JSON.stringify({type: 1, senderId: parseInt(sellerId), currentUserId: parseInt(currentUserId)}));
             } else if (convId) {
                 conversationId = parseInt(convId);
-                ws.send(JSON.stringify({type: 2, conversationId: conversationId}));
+                ws.send(JSON.stringify({type: 2, conversationId: conversationId, currentUserId: parseInt(currentUserId)}));
             } else if (userId) {
-                ws.send(JSON.stringify({type: 3, userId: currentUserId, authorUserId: parseInt(userId)}));
+                ws.send(JSON.stringify({type: 3, currentUserId: parseInt(currentUserId), authorUserId: parseInt(userId)}));
             }
         };
         
@@ -262,10 +281,11 @@ function connectWebSocket() {
                 } else if (data.type === 'history') {
                     tradeMessages = data.messages.map(msg => ({
                         id: msg.id,
-                        sender: msg.sender,
+                        sender: msg.sender ?? msg.senderId,
+                        isMine: parseInt(msg.sender ?? msg.senderId) === parseInt(currentUserId),
                         content: msg.content,
                         timeStr: msg.timeStr,
-                        isread: msg.isread,
+                        isread: msg.isread ?? msg.isRead,
                         status: 'sent'
                     }));
                     if (conversationId === null) {
@@ -322,6 +342,7 @@ function sendBuyerMessage(msgText) {
     const newMessage = {
         id: msgId,
         sender: currentUserId,
+        isMine: true,
         content: msgText,
         timeStr: getCurrentTime(),
         createTime: new Date(),
@@ -369,6 +390,20 @@ function initTradeChat() {
     tradeMessages = [];
 }
 
+function parseChatIdentity(urlParams, userInfo) {
+    const chatId = urlParams.get('chatId');
+    if (chatId !== null && chatId !== '') {
+        const parsed = Number.parseInt(chatId, 10);
+        return Number.isNaN(parsed) ? null : parsed;
+    }
+    const userId = userInfo && userInfo.userId;
+    if (userId === null || userId === undefined || userId === '') {
+        return null;
+    }
+    const parsed = Number.parseInt(userId, 10);
+    return Number.isNaN(parsed) ? null : parsed;
+}
+
 // 页面初始化
 document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('accessToken');
@@ -379,11 +414,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
-    currentUserId = userInfo.userId;
+    const urlParams = new URLSearchParams(window.location.search);
+    currentUserId = parseChatIdentity(urlParams, userInfo);
+    if (currentUserId === null) {
+        sessionStorage.setItem('redirectAfterLogin', window.location.href);
+        window.location.href = '/user/login';
+        return;
+    }
     
     // 解析 URL 参数
-    const urlParams = new URLSearchParams(window.location.search);
     conversationId = urlParams.get('conversationId');
+    const sellerId = urlParams.get('sellerId');
+    const userId = urlParams.get('userId');
+    const goodsId = urlParams.get('goodsId');
+
+    // 仅允许从商品详情页（sellerId）或已有会话（conversationId/userId）进入
+    if (!conversationId && !sellerId && !userId) {
+        alert('请从商品详情页点击聊天按钮发起会话');
+        window.location.href = '/browse';
+        return;
+    }
+
+    if (sellerId && Number(sellerId) === Number(currentUserId)) {
+        alert('不能和自己发起聊天');
+        if (goodsId) {
+            window.location.href = `/buy/${encodeURIComponent(goodsId)}`;
+        } else {
+            window.location.href = '/browse';
+        }
+        return;
+    }
     
     // 连接 WebSocket
     connectWebSocket();
