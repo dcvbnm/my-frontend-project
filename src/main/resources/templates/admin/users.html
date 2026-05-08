@@ -25,7 +25,7 @@
     <a th:href="@{/admin/users}">用户管理</a>
     <a th:href="@{/admin/goods}">商品管理</a>
     <a th:href="@{/admin/orders}">订单管理</a>
-    <a th:href="@{/admin/announcements}">公告管理</a>
+    <a th:href="@{/admin/reports}">举报信息</a>
     <a th:href="@{/admin/statistics}">统计报表</a>
     <a th:href="@{/admin/logout}">退出登录</a>
 </div>
@@ -58,7 +58,10 @@
                 <td th:text="${#dates.format(user.creatDate, 'yyyy-MM-dd')}"></td>
                 <td>
                     <div class="action-group">
-                        <a class="action-link chat-btn" th:href="@{/communication(userId=${user.userId},chatId='000000')}">聊天</a>
+                                <a class="action-link chat-btn"
+                                    th:if="${adminChatUserId != null and user.userId != adminChatUserId}"
+                                    th:href="@{/communication(userId=${user.userId},chatId=${adminChatUserId})}">聊天</a>
+                                <span class="action-link chat-btn" th:if="${adminChatUserId == null or user.userId == adminChatUserId}" style="background:#9e9e9e; cursor:not-allowed;">聊天</span>
                         <form th:action="@{/admin/users/delete}" method="post" style="display:inline">
                             <input type="hidden" name="id" th:value="${user.userId}">
                             <button type="submit" onclick="return confirm('确认删除该用户吗？');">删除</button>

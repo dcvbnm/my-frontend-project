@@ -162,6 +162,12 @@ public class mywshandler extends TextWebSocketHandler {
                 }
                 msg.setContent((String) data.get("content"));
                 msg.setTimeStr((String) data.get("timeStr"));
+                if (data.get("messageType") instanceof Number) {
+                    msg.setMessageType(((Number) data.get("messageType")).intValue());
+                }
+                if (data.get("fileUrl") instanceof String) {
+                    msg.setFileUrl((String) data.get("fileUrl"));
+                }
             }
 
             if (sb.getConversationId() == null || sb.getAuthorUserId() == null || msg.getContent() == null) {

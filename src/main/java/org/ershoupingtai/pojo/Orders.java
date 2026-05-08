@@ -40,6 +40,15 @@ public class Orders {
     @TableField("IsReceived")
     private Boolean isReceived;
 
+    @TableField(exist = false)
+    private String buyerName;
+
+    @TableField(exist = false)
+    private String sellerName;
+
+    @TableField(exist = false)
+    private String goodsName;
+
     public Orders() {}
 
     public Integer getOrderId() {
@@ -120,5 +129,29 @@ public class Orders {
 
     public void setIsReceived(Boolean isReceived) {
         this.isReceived = isReceived;
+    }
+
+    public String getBuyerName() {
+        return buyerName;
+    }
+
+    public void setBuyerName(String buyerName) {
+        this.buyerName = buyerName;
+    }
+
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
+    }
+
+    public String getGoodsName() {
+        return goodsName;
+    }
+
+    public void setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
     }
 }

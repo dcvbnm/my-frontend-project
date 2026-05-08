@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员举报信息</title>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #f7f9fc; }
+        .header { background: #1976d2; color: #fff; padding: 18px 24px; display:flex; align-items:center; gap:18px; flex-wrap: wrap; }
+        .header a { color: #fff; text-decoration: none; }
+        .container { max-width: 1280px; margin: 28px auto; padding: 0 18px; }
+        .card { background: #fff; border-radius: 12px; padding: 22px; box-shadow: 0 0 24px rgba(0,0,0,0.06); margin-bottom: 18px; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+        th, td { border-bottom: 1px solid #e6edf5; padding: 12px 10px; text-align: left; font-size: 14px; vertical-align: top; }
+        th { background: #f3f7fb; color: #27405f; position: sticky; top: 0; }
+        .empty { text-align:center; color:#666; padding: 36px 0; }
+        .badge { display:inline-block; padding: 4px 8px; border-radius: 999px; font-size: 12px; }
+        .pending { background:#fff2cc; color:#9a6700; }
+        .done { background:#d6f5dd; color:#1f6b33; }
+        .action-btn { border: 0; border-radius: 6px; padding: 8px 12px; cursor: pointer; color: #fff; background: #1976d2; }
+        .action-btn:disabled { background: #9bb7d6; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <button class="back-btn" onclick="history.back()" title="返回上一页" style="background: none; border: 1px solid #fff; border-radius: 4px; color: #fff; padding: 8px 12px; cursor: pointer; margin-right: 10px;">← 返回</button>
+    <a th:href="@{/admin/dashboard}">首页</a>
+    <a th:href="@{/admin/users}">用户管理</a>
+    <a th:href="@{/admin/goods}">商品管理</a>
+    <a th:href="@{/admin/orders}">订单管理</a>
+    <a th:href="@{/admin/reports}">举报信息</a>
+    <a th:href="@{/admin/statistics}">统计报表</a>
+    <a th:href="@{/admin/logout}">退出登录</a>
+</div>
+<div class="container">
+    <div class="card">
+        <h1>举报信息</h1>
+        <p>这里汇总所有商品举报，管理员可据此后续处理。</p>
+    </div>
+    <div class="card table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th>举报ID</th>
+                <th>商品</th>
+                <th>商品位置</th>
+                <th>举报人</th>
+                <th>被举报人</th>
+                <th>举报类型</th>
+                <th>举报说明</th>
+                <th>状态</th>
+                <th>举报时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${reports == null || reports.isEmpty()}">
+                <td class="empty" colspan="10">暂无举报信息</td>
+            </tr>
+            <tr th:each="report : ${reports}">
+                <td th:text="${report.reportId}"></td>
+                <td>
+                    <div th:text="${report.goodsName ?: '未知商品'}"></div>
+                    <div style="color:#6b7280; font-size:12px;" th:text="${'商品ID：' + report.goodsId}"></div>
+                </td>
+                <td th:text="${report.goodsLocation ?: '未知'}"></td>
+                <td th:text="${report.reporterStudentId ?: report.reporterId}"></td>
+                <td th:text="${report.reportedStudentId ?: report.reportedId}"></td>
+                <td th:text="${report.typeText ?: '未分类'}"></td>
+                <td th:text="${report.description ?: ''}"></td>
+                <td>
+                    <span th:classappend="${report.isHandled} ? 'badge done' : 'badge pending'"
+                          th:text="${report.isHandled} ? '已处理' : '未处理'"></span>
+                </td>
+                <td th:text="${report.createdAt ?: '-'}"></td>
+                <td>
+                    <form th:if="${!report.isHandled}" th:action="@{/admin/reports/handled}" method="post" style="display:inline">
+                        <input type="hidden" name="id" th:value="${report.reportId}">
+                        <button class="action-btn" type="submit">标记已处理</button>
+                    </form>
+                    <span th:if="${report.isHandled}" style="color:#6b7280;">无需操作</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

@@ -7,8 +7,12 @@ import org.ershoupingtai.common.security.UserContext;
 import org.ershoupingtai.pojo.Goods;
 import org.ershoupingtai.pojo.PurchaseRequest;
 import org.ershoupingtai.pojo.PurchaseResult;
+import org.ershoupingtai.pojo.ReportRequest;
+import org.ershoupingtai.pojo.user.User;
 import org.ershoupingtai.service.GoodsService;
 import org.ershoupingtai.service.OrderPurchaseService;
+import org.ershoupingtai.service.ReportService;
+import org.ershoupingtai.service.user.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,13 +45,19 @@ public class goodscontroller {
 
 	private final GoodsService goodsService;
 	private final OrderPurchaseService orderPurchaseService;
+	private final ReportService reportService;
+	private final UserService userService;
 	private final AuthTokenService authTokenService;
 
 	public goodscontroller(GoodsService goodsService,
 						  OrderPurchaseService orderPurchaseService,
+					  ReportService reportService,
+				  UserService userService,
 						  AuthTokenService authTokenService) {
 		this.goodsService = goodsService;
 		this.orderPurchaseService = orderPurchaseService;
+		this.reportService = reportService;
+		this.userService = userService;
 		this.authTokenService = authTokenService;
 	}
 
@@ -166,6 +176,32 @@ public class goodscontroller {
 			ex.printStackTrace();
 			return Result.fail(ResultCode.SYSTEM_ERROR);
 		}
+	}
+
+	@ResponseBody
+	@PostMapping("/api/goods/{id}/report")
+	public Result<Void> report(@PathVariable Long id,
+							   @RequestBody(required = false) ReportRequest request,
+							   HttpServletRequest httpRequest) {
+		Integer currentUserId = resolveCurrentUserId(httpRequest);
+		if (currentUserId == null) {
+			return Result.fail("请先登录");
+		}
+		try {
+			reportService.submitReport(currentUserId, id, request);
+			return Result.success();
+		} catch (Exception ex) {
+			return Result.fail(ex.getMessage());
+		}
+	}
+
+	private Integer resolveCurrentUserId(HttpServletRequest request) {
+		String studentId = resolveCurrentStudentId(request);
+		if (!StringUtils.hasText(studentId)) {
+			return null;
+		}
+		User user = userService.findByStudentId(studentId);
+		return user == null || user.getId() == null ? null : user.getId().intValue();
 	}
 
 	private String resolveCurrentStudentId(HttpServletRequest request) {

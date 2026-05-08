@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>买家和卖家沟通平台</title>
-    <link rel="stylesheet" href="/css/communication.css?v=20260427d">
+    <link rel="stylesheet" href="/css/communication.css?v=20260506b">
 </head>
 <body>
 <div class="trade-chat">
@@ -46,6 +46,11 @@
             <button class="quick-btn" data-msg="价格还能再优惠吗？">💰 议价</button>
             <button class="quick-btn" data-msg="有保修吗？支持退换吗？">🛡️ 售后咨询</button>
         </div>
+        <div class="media-actions">
+            <input id="tradeImageInput" type="file" accept="image/*" hidden>
+            <button class="media-btn" id="sendImageBtn" type="button">🖼️ 发送图片</button>
+            <span class="media-hint">支持 jpg、png、gif、webp</span>
+        </div>
         <div class="input-wrapper">
             <div class="input-box">
                 <textarea id="tradeMessageInput" rows="1" placeholder="请输入文本"></textarea>
@@ -58,6 +63,6 @@
     </div>
 </div>
 
-<script src="/js/communication.js?v=20260427d"></script>
+<script src="/js/communication.js?v=20260506b"></script>
 </body>
 </html>

@@ -370,6 +370,49 @@ public class UserService {
         );
     }
 
+    public boolean isFavoriteGoods(Long userId, Long goodsId) {
+        if (userId == null || goodsId == null) {
+            return false;
+        }
+        Integer count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(1) FROM dbo.Collection WHERE UserId = ? AND GoodsId = ?",
+                Integer.class,
+                userId,
+                goodsId
+        );
+        return count != null && count > 0;
+    }
+
+    @Transactional
+    public boolean addFavoriteGoods(Long userId, Long goodsId) {
+        if (userId == null || goodsId == null) {
+            throw new IllegalArgumentException("用户或商品不存在");
+        }
+        if (isFavoriteGoods(userId, goodsId)) {
+            return false;
+        }
+        if (getGoodsById(goodsId) == null) {
+            throw new IllegalArgumentException("商品不存在");
+        }
+        return jdbcTemplate.update(
+                "INSERT INTO dbo.Collection (UserId, GoodsId) VALUES (?, ?)",
+                userId,
+                goodsId
+        ) > 0;
+    }
+
+    @Transactional
+    public boolean removeFavoriteGoods(Long userId, Long goodsId) {
+        if (userId == null || goodsId == null) {
+            throw new IllegalArgumentException("用户或商品不存在");
+        }
+        return jdbcTemplate.update(
+                "DELETE FROM dbo.Collection WHERE UserId = ? AND GoodsId = ?",
+                userId,
+                goodsId
+        ) > 0;
+    }
+
     private List<OrderEntity> getOrdersByUser(Long userId) {
         return jdbcTemplate.query(
                 "SELECT OrderId, BuyerId, SellerId, GoodsId, Price, PurchaseQuantity, TotalPrice, IsPaid, OrderTime, IsReceived FROM dbo.Orders WHERE BuyerId = ? OR SellerId = ? ORDER BY OrderTime DESC, OrderId DESC",

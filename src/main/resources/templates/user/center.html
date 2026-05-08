@@ -176,6 +176,18 @@
             });
         }
 
+        // 根据 URL hash 自动切换到对应面板，例如 /user/center#pane-favorite
+        (function () {
+            var h = window.location.hash;
+            if (!h) return;
+            var target = h.replace('#', '');
+            if (document.getElementById(target)) {
+                activate(target);
+            } else if (target === 'favorite' || target === '我的收藏') {
+                activate('pane-favorite');
+            }
+        })();
+
         function showMessage(type, message) {
             successEl.style.display = 'none';
             errorEl.style.display = 'none';
@@ -260,6 +272,12 @@
             goodsList.forEach(function (item) {
                 var card = document.createElement('article');
                 card.className = 'goods-item';
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', function () {
+                    if (item && item.id) {
+                        window.location.href = '/buy/' + item.id;
+                    }
+                });
                 card.innerHTML =
                     '<div><strong>' + (item.title || '-') + '</strong>' +
                     '<p class="sub">' + (item.status || '-') + '</p></div>' +

@@ -1,5 +1,11 @@
 const chatListEl = document.getElementById("chatList");
 const chatCountEl = document.getElementById("chatCount");
+let refreshTimer = null;
+let chatWs = null;
+
+function getAccessToken() {
+    return localStorage.getItem("accessToken");
+}
 
 function getCurrentUserId() {
     const userInfo = localStorage.getItem("userInfo");
@@ -33,6 +39,44 @@ async function fetchConversations(userId) {
         throw new Error(json.msg || "加载聊天列表失败");
     }
     return Array.isArray(json.data) ? json.data : [];
+}
+
+function connectChatSocket(userId) {
+    const token = getAccessToken();
+    if (!token || !userId) {
+        return;
+    }
+    if (chatWs && (chatWs.readyState === WebSocket.OPEN || chatWs.readyState === WebSocket.CONNECTING)) {
+        return;
+    }
+
+    const wsUrl = `ws://localhost:8081/ws/chat?UserId=${encodeURIComponent(userId)}&token=${encodeURIComponent(token)}`;
+    chatWs = new WebSocket(wsUrl);
+
+    chatWs.onopen = () => {
+        console.log("聊天列表 WebSocket 已连接");
+    };
+
+    chatWs.onmessage = async (event) => {
+        try {
+            const data = JSON.parse(event.data);
+            if (data.type === "new_message" || data.type === "all_read" || data.type === "ack") {
+                const latest = await fetchConversations(userId);
+                renderList(latest);
+            }
+        } catch (e) {
+            console.warn("聊天列表消息解析失败:", e);
+        }
+    };
+
+    chatWs.onclose = () => {
+        chatWs = null;
+        setTimeout(() => connectChatSocket(userId), 3000);
+    };
+
+    chatWs.onerror = () => {
+        // 交给 onclose 后的重连处理
+    };
 }
 
 function renderList(items) {
@@ -80,12 +124,35 @@ async function init() {
     }
 
     bindEvents();
+    connectChatSocket(userId);
     try {
         const list = await fetchConversations(userId);
         renderList(list);
     } catch (e) {
         chatListEl.innerHTML = `<div class="empty-box">${e.message}</div>`;
     }
+
+    if (refreshTimer) {
+        clearInterval(refreshTimer);
+    }
+    refreshTimer = setInterval(async () => {
+        if (document.hidden) {
+            return;
+        }
+        try {
+            const latest = await fetchConversations(userId);
+            renderList(latest);
+        } catch (e) {
+            console.warn("刷新聊天列表失败:", e);
+        }
+    }, 5000);
 }
+
+window.addEventListener("beforeunload", () => {
+    if (refreshTimer) {
+        clearInterval(refreshTimer);
+        refreshTimer = null;
+    }
+});
 
 init();

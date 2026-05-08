@@ -15,6 +15,8 @@ const messageInput = document.getElementById('tradeMessageInput');
 const sendBtn = document.getElementById('sendTradeBtn');
 const typingArea = document.getElementById('tradeTypingArea');
 const quickBtns = document.querySelectorAll('.quick-btn');
+const imageInput = document.getElementById('tradeImageInput');
+const imageBtn = document.getElementById('sendImageBtn');
 
 // 状态机
 let isOtherTyping = false;
@@ -22,6 +24,7 @@ let otherTypingTimeout = null;
 let pendingReplyTimeout = null;
 let currentUserId = null;
 let conversationId = null;
+let isAdminChatMode = false;
 
 // 辅助函数
 function getCurrentTime() {
@@ -47,6 +50,39 @@ function isAtBottom() {
 function generateMessageId() {
     // Use negative, int-safe temporary IDs so Java backend int parsing won't overflow.
     return nextMessageId--;
+}
+
+function isImageMessage(msg) {
+    return Number(msg && msg.messageType) === 2;
+}
+
+function isImageUrl(value) {
+    if (!value || typeof value !== 'string') return false;
+    return /^\/uploads\//.test(value) || /\.(png|jpe?g|gif|webp|bmp)(\?.*)?$/i.test(value);
+}
+
+function buildWsMessagePayload(message) {
+    return {
+        content: message.content,
+        messageType: message.messageType,
+        fileUrl: message.fileUrl,
+        timeStr: message.timeStr
+    };
+}
+
+function uploadChatImage(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return fetch('/api/upload/image', {
+        method: 'POST',
+        body: formData
+    }).then(async (res) => {
+        const json = await res.json();
+        if (!json || json.code !== 200 || !json.data) {
+            throw new Error((json && json.msg) || '图片上传失败');
+        }
+        return json.data;
+    });
 }
 
 // 检查 WebSocket 是否可用
@@ -77,8 +113,7 @@ function resendMessage(msgId) {
             type: 4,
             conversationId: parseInt(conversationId),
             messageId: msgId,
-            content: message.content,
-            timeStr: message.timeStr
+            message: buildWsMessagePayload(message)
         }));
         startTimeoutCheck(msgId);
         renderTradeMessages();
@@ -109,7 +144,29 @@ function renderTradeMessages() {
         }
         const bubbleDiv = document.createElement('div');
         bubbleDiv.className = 'bubble';
-        bubbleDiv.innerHTML = (msg.content || '').replace(/\n/g, '<br>');
+        if (isImageMessage(msg) || isImageUrl(msg.content)) {
+            const imageWrap = document.createElement('div');
+            imageWrap.className = 'bubble-image';
+            const image = document.createElement('img');
+            image.src = msg.content;
+            image.alt = '聊天图片';
+            image.loading = 'lazy';
+            image.onerror = () => {
+                imageWrap.innerHTML = '<span>图片加载失败</span>';
+            };
+            imageWrap.appendChild(image);
+            bubbleDiv.appendChild(imageWrap);
+
+            const link = document.createElement('a');
+            link.className = 'bubble-image-link';
+            link.href = msg.content;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.textContent = '打开原图';
+            bubbleDiv.appendChild(link);
+        } else {
+            bubbleDiv.innerHTML = (msg.content || '').replace(/\n/g, '<br>');
+        }
         const metaDiv = document.createElement('div');
         metaDiv.className = 'message-meta';
         const timeSpan = document.createElement('span');
@@ -180,8 +237,7 @@ function sendMessage(newMessage) {
             type: 4,
             conversationId: parseInt(conversationId),
             messageId: newMessage.id,
-            content: newMessage.content,
-            timeStr: newMessage.timeStr
+            message: buildWsMessagePayload(newMessage)
         }));
         startTimeoutCheck(newMessage.id);
     } else {
@@ -199,6 +255,7 @@ function receiveAndRenderNewMessage(data) {
         isMine: false,
         content: data.content,
         timeStr: data.timeStr,
+        messageType: data.messageType,
         status: 'sent',
         isread: true
     });
@@ -235,8 +292,12 @@ function reconnectWebSocket() {
 // WebSocket 连接
 function connectWebSocket() {
     const token = localStorage.getItem('accessToken');
-    if (!token || !currentUserId) {
+    if (!currentUserId) {
         console.log('未登录，无法建立 WebSocket 连接');
+        return;
+    }
+    if (!token && !isAdminChatMode) {
+        console.log('缺少 accessToken，无法建立 WebSocket 连接');
         return;
     }
     
@@ -245,7 +306,8 @@ function connectWebSocket() {
         return;
     }
     
-    const wsUrl = `ws://localhost:8081/ws/chat?UserId=${currentUserId}&token=${token}`;
+    const wsToken = token || '';
+    const wsUrl = `ws://localhost:8081/ws/chat?UserId=${currentUserId}&token=${encodeURIComponent(wsToken)}`;
     console.log('连接 WebSocket:', wsUrl);
     
     try {
@@ -285,6 +347,7 @@ function connectWebSocket() {
                         isMine: parseInt(msg.sender ?? msg.senderId) === parseInt(currentUserId),
                         content: msg.content,
                         timeStr: msg.timeStr,
+                        messageType: msg.messageType,
                         isread: msg.isread ?? msg.isRead,
                         status: 'sent'
                     }));
@@ -344,12 +407,53 @@ function sendBuyerMessage(msgText) {
         sender: currentUserId,
         isMine: true,
         content: msgText,
+        messageType: 1,
         timeStr: getCurrentTime(),
         createTime: new Date(),
         isread: false,
         status: 'sending'
     };
     sendMessage(newMessage);
+}
+
+async function sendImageMessage(file) {
+    if (!file) return;
+    if (!file.type || !file.type.startsWith('image/')) {
+        alert('请选择图片文件');
+        return;
+    }
+
+    if (imageBtn) {
+        imageBtn.disabled = true;
+    }
+
+    try {
+        const imageUrl = await uploadChatImage(file);
+        const msgId = generateMessageId();
+        const newMessage = {
+            id: msgId,
+            sender: currentUserId,
+            isMine: true,
+            content: imageUrl,
+            fileUrl: imageUrl,
+            messageType: 2,
+            timeStr: getCurrentTime(),
+            createTime: new Date(),
+            isread: false,
+            status: 'sending'
+        };
+        sendMessage(newMessage);
+    } catch (e) {
+        console.error('图片发送失败:', e);
+        alert(e.message || '图片发送失败');
+    } finally {
+        if (imageBtn) {
+            imageBtn.disabled = false;
+        }
+        if (imageInput) {
+            imageInput.value = '';
+        }
+    }
 }
 
 // 输入框事件
@@ -394,7 +498,9 @@ function parseChatIdentity(urlParams, userInfo) {
     const chatId = urlParams.get('chatId');
     if (chatId !== null && chatId !== '') {
         const parsed = Number.parseInt(chatId, 10);
-        return Number.isNaN(parsed) ? null : parsed;
+        if (!Number.isNaN(parsed) && parsed > 0) {
+            return parsed;
+        }
     }
     const userId = userInfo && userInfo.userId;
     if (userId === null || userId === undefined || userId === '') {
@@ -406,15 +512,18 @@ function parseChatIdentity(urlParams, userInfo) {
 
 // 页面初始化
 document.addEventListener('DOMContentLoaded', async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const chatIdParam = urlParams.get('chatId');
+    isAdminChatMode = chatIdParam !== null && chatIdParam !== '';
+
     const token = localStorage.getItem('accessToken');
-    if (!token) {
+    if (!token && !isAdminChatMode) {
         sessionStorage.setItem('redirectAfterLogin', window.location.href);
         window.location.href = '/user/login';
         return;
     }
     
     const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
-    const urlParams = new URLSearchParams(window.location.search);
     currentUserId = parseChatIdentity(urlParams, userInfo);
     if (currentUserId === null) {
         sessionStorage.setItem('redirectAfterLogin', window.location.href);
@@ -432,6 +541,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!conversationId && !sellerId && !userId) {
         alert('请从商品详情页点击聊天按钮发起会话');
         window.location.href = '/browse';
+        return;
+    }
+
+    if (userId && Number(userId) === Number(currentUserId)) {
+        alert('不能和自己发起聊天');
+        window.location.href = '/admin/users';
         return;
     }
 
@@ -456,6 +571,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 sendBuyerMessage(msg);
                 messageInput.value = '';
                 autoResize();
+            }
+        });
+    }
+
+    if (imageBtn && imageInput) {
+        imageBtn.addEventListener('click', () => imageInput.click());
+        imageInput.addEventListener('change', () => {
+            const file = imageInput.files && imageInput.files[0];
+            if (file) {
+                sendImageMessage(file);
             }
         });
     }

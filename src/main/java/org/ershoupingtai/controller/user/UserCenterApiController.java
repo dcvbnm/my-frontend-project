@@ -8,6 +8,7 @@ import org.ershoupingtai.common.security.UserContext;
 import org.ershoupingtai.pojo.user.User;
 import org.ershoupingtai.service.user.UserService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -223,6 +224,46 @@ public class UserCenterApiController {
         }
     }
 
+    @PostMapping("/center/favorite")
+    public Result<Map<String, Object>> addFavorite(@RequestParam Long goodsId) {
+        Long userId = resolveCurrentUserId();
+        if (userId == null) {
+            return Result.fail("请先登录");
+        }
+        try {
+            boolean changed = userService.addFavoriteGoods(userId, goodsId);
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("favorited", true);
+            payload.put("changed", changed);
+            payload.put("user", userService.findByStudentId(UserContext.getUserId()));
+            return Result.success(payload);
+        } catch (IllegalArgumentException ex) {
+            return Result.fail(ex.getMessage());
+        } catch (Exception ex) {
+            return Result.fail(ResultCode.SYSTEM_ERROR);
+        }
+    }
+
+    @DeleteMapping("/center/favorite")
+    public Result<Map<String, Object>> removeFavorite(@RequestParam Long goodsId) {
+        Long userId = resolveCurrentUserId();
+        if (userId == null) {
+            return Result.fail("请先登录");
+        }
+        try {
+            boolean changed = userService.removeFavoriteGoods(userId, goodsId);
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("favorited", false);
+            payload.put("changed", changed);
+            payload.put("user", userService.findByStudentId(UserContext.getUserId()));
+            return Result.success(payload);
+        } catch (IllegalArgumentException ex) {
+            return Result.fail(ex.getMessage());
+        } catch (Exception ex) {
+            return Result.fail(ResultCode.SYSTEM_ERROR);
+        }
+    }
+
     @PostMapping("/center/avatar")
     public Result<User> uploadAvatar(@RequestParam("avatar") MultipartFile avatar) {
         String studentId = UserContext.getUserId();
@@ -269,6 +310,15 @@ public class UserCenterApiController {
         payload.put("studentId", user.getStudentId());
         payload.put("userName", user.getUsername());
         return payload;
+    }
+
+    private Long resolveCurrentUserId() {
+        String studentId = UserContext.getUserId();
+        if (studentId == null) {
+            return null;
+        }
+        User user = userService.findByStudentId(studentId);
+        return user == null ? null : user.getId();
     }
 
     private String extractAccessToken(HttpServletRequest request) {

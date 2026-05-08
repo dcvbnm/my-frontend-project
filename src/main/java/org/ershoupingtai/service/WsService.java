@@ -131,7 +131,7 @@ public class WsService {
         msg.setReceiverId(receiverId);
         
         // 更新会话最后消息
-        updateConversationLastMessage(conversationId, msg.getContent(), senderId);
+        updateConversationLastMessage(conversationId, buildConversationPreview(msg), senderId);
         
         wsMapper.insertMessage(msg);
         return msg.getId();
@@ -148,6 +148,8 @@ public class WsService {
             result.put("messageId", realId);
             result.put("sender", msg.getSenderId());
             result.put("content", msg.getContent());
+            result.put("messageType", msg.getMessageType());
+            result.put("fileUrl", msg.getFileUrl());
             result.put("timeStr", msg.getTimeStr());
             result.put("conversationId", msg.getConversationId());
             return mapper.writeValueAsString(result);
@@ -222,5 +224,16 @@ public class WsService {
             conversation.setUpdatedAt(new Date());
             wsMapper.updateConversation(conversation);
         }
+    }
+
+    private String buildConversationPreview(Messages msg) {
+        if (msg == null) {
+            return "";
+        }
+        if (msg.getMessageType() != null && msg.getMessageType() == 2) {
+            return "[图片]";
+        }
+        String content = msg.getContent();
+        return content == null ? "" : content;
     }
 }

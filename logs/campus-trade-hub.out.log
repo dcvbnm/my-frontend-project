@@ -1,0 +1,93 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::               (v2.7.14)
+
+2026-05-07 23:18:00.677  INFO 26592 --- [           main] o.e.CampusTradeHubApplication            : Starting CampusTradeHubApplication v1.0.0 using Java 24.0.1 on DESKTOP-ALT3OKS with PID 26592 (E:\web\On-campus second-hand trading platform\target\campus-trade-hub-1.0.0.jar started by ASUS in E:\web\On-campus second-hand trading platform)
+2026-05-07 23:18:00.685  INFO 26592 --- [           main] o.e.CampusTradeHubApplication            : The following 1 profile is active: "prod"
+2026-05-07 23:18:01.511  INFO 26592 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-05-07 23:18:01.519  INFO 26592 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-05-07 23:18:01.559  INFO 26592 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 8 ms. Found 0 Redis repository interfaces.
+2026-05-07 23:18:02.340  INFO 26592 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8081 (http)
+2026-05-07 23:18:02.353  INFO 26592 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-07 23:18:02.355  INFO 26592 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.78]
+2026-05-07 23:18:02.444  INFO 26592 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-07 23:18:02.448  INFO 26592 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1688 ms
+ _ _   |_  _ _|_. ___ _ |    _ 
+| | |\/|_)(_| | |_\  |_)||_|_\ 
+     /               |         
+                        3.5.3.1 
+2026-05-07 23:18:03.301  WARN 26592 --- [           main] c.b.m.core.injector.DefaultSqlInjector   : class org.ershoupingtai.pojo.UserLogin ,Not found @TableId annotation, Cannot use Mybatis-Plus 'xxById' Method.
+2026-05-07 23:18:03.392  INFO 26592 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-07 23:18:03.708  INFO 26592 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-07 23:18:03.731  WARN 26592 --- [           main] c.b.m.core.injector.DefaultSqlInjector   : class org.ershoupingtai.pojo.UserInfo ,Not found @TableId annotation, Cannot use Mybatis-Plus 'xxById' Method.
+2026-05-07 23:18:04.154  INFO 26592 --- [           main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page template: index
+2026-05-07 23:18:04.447  INFO 26592 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8081 (http) with context path ''
+2026-05-07 23:18:04.460  INFO 26592 --- [           main] o.e.CampusTradeHubApplication            : Started CampusTradeHubApplication in 4.353 seconds (JVM running for 4.786)
+Database connection successful. User count: 4
+? 校园二手交易平台启动成功！
+? 访问地址：http://localhost:8081/user/login
+2026-05-07 23:18:07.621  INFO 26592 --- [nio-8081-exec-1] o.apache.coyote.http11.Http11Processor   : Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+
+java.lang.IllegalArgumentException: Invalid character found in the request target [0xda0x080x000x070x060x0csdk_platform0x160x0120x060x09encr_type0x160x07rsapost0x060x07version0x160x02v20x060x03cmd0x160x0arequest_v20x060x07bea_key0x160xacIvgfIQ1nNRDKHU9LElgxEfhINuz5jq3yzZsuhze+ajB/AcQFbqsv7KSX/eTtPm35ASOiGHqm6rdmRu/0cge1RqEJelTjQl+CmAJGdFtx0WMpzYf8FPWmcz1Bt/TVJo2QfLoWvWthdLTomzTMsypSRQnFiaPGKq/D0C91AFWUIGM=0x060x0bwup_version0x160x033.00x060x0dTYPE_COMPRESS0x160x0120x1d0x000x010x080xb0wi0xacae0xa10xe9%810x0c*0xcb0xd1nn0x1d0xf60x03"0xa50xf0d=0x1e0xe8;0xe810xb7i0xb9u0xb50xa2"*0x0an0xc90x9c0x050xec'0xab{i0xae?0x05|0xe7rl0x8f0xbb0x010xe4i0x8e0x0aO0xed0x0b0xcfs-0x810x8f0x8d0xab0x130xb76>0xbf?:0xba0xc30xf00x17%0x1d0xf60x930xc70xa6=T0xb7Y0xf9R80xad~0xe2V0x95$0x0a0x900x03[0xc350xe60xb9j0xfe0x090xc9A0x930xfb0x0b0xd50x070xafdyL=0x96N0xb80x190xa20x90DQ0xcb|0x8bj0x130xb20x010x110xaf0xd930xf60x100xcf30x1eWCi0x1d0x99 ]. The valid characters are defined in RFC 7230 and RFC 3986
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:490) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:263) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:926) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1791) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at java.base/java.lang.Thread.run(Thread.java:1447) ~[na:na]
+
+2026-05-07 23:49:11.355  INFO 26592 --- [nio-8081-exec-4] o.apache.coyote.http11.Http11Processor   : Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+
+java.lang.IllegalArgumentException: Invalid character found in the request target [0x9a0x080x000x070x060x0csdk_platform0x160x0120x060x09encr_type0x160x07rsapost0x060x07version0x160x02v20x060x03cmd0x160x0arequest_v20x060x07bea_key0x160xacIvgfIQ1nNRDKHU9LElgxEfhINuz5jq3yzZsuhze+ajB/AcQFbqsv7KSX/eTtPm35ASOiGHqm6rdmRu/0cge1RqEJelTjQl+CmAJGdFtx0WMpzYf8FPWmcz1Bt/TVJo2QfLoWvWthdLTomzTMsypSRQnFiaPGKq/D0C91AFWUIGM=0x060x0bwup_version0x160x033.00x060x0dTYPE_COMPRESS0x160x0120x1d0x000x010x08pp0xc80x830xa34#0xfe0xe0Q0xdb0xe70xdf0xc50xaf0x1a0x910x1b0x170x0f0x8fHq50xbe0x1a[0x8cu0x930xe5)0xad0xb70x1a0xce0x9d0xf9(0xba0xbf0x9d>0x8du0xfa0xba0xe7;0x950xc4^0x860xd8q0x020xdch0x050x03F0xce0xf8c0xc50xaa0x1eD0xc20xc1!0x0cy20xb00xa5&0xb60xd9|0xefJk0x020x940x0c0x900x13nD0xc40xb50x010xc90x020xa80x840xdfd^0x8d&0xa20xa190xad0xb10xfd0x0b(:0x800xc10xa00xa0nr0xf20x110x9c0xf8`&L0xe8$"0x900xc30xb50x1840xd8|0xb2=0x8bog0xa10xe80xb90xe10x9e0xd00xab0xb30xd10xcc0x130xfb0xd10x8c0xd20x7fO\0x12k90xeb0x800x970x010x81o0x940xb40x0d0xdd0xde0xeaf0xa60x80%y0xa70x900x1420xe90x19L0xb3Pvv0xd6@H0xae0xf6xp0x920x0b0x870xca0xaa0xd30xf440x1d}0x8430xb9T0x95q0xb10xabJ0x840x100x19M$b0xa50xb7[k@0xf30x1d7(90xd50x0c0xf90x030xca50xb70xac-0xeaMLx.0x090xdf0x010x89zoB\0x06+0x130xee0xf6`El0xae10x040xc30xe60xc30xdb0x850x980xc0G0xe00x9d0xd56Xj}0xca0xa60x150x9f0xb50xe50xbfo0xd10x820x020xba+\0xdah00xc50xc9N0x850x980xba30xfby0xc10x140x09.W0xd6oM.0xa50xb4CE0x9f0xad.0x80L*,0xb80xab0xcc<0xe30x8a0x060x0eZ30xa90xf6W0xa10x160x86Q+0xf40xe20x1e0xea0x05}[PZ)0xebF0x83 ]. The valid characters are defined in RFC 7230 and RFC 3986
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:490) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:263) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:926) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1791) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at java.base/java.lang.Thread.run(Thread.java:1447) ~[na:na]
+
+2026-05-07 23:49:11.355  INFO 26592 --- [nio-8081-exec-2] o.apache.coyote.http11.Http11Processor   : Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+
+java.lang.IllegalArgumentException: Invalid character found in the request target [0x9a0x080x000x070x060x0csdk_platform0x160x0120x060x09encr_type0x160x07rsapost0x060x07version0x160x02v20x060x03cmd0x160x0arequest_v20x060x07bea_key0x160xacIvgfIQ1nNRDKHU9LElgxEfhINuz5jq3yzZsuhze+ajB/AcQFbqsv7KSX/eTtPm35ASOiGHqm6rdmRu/0cge1RqEJelTjQl+CmAJGdFtx0WMpzYf8FPWmcz1Bt/TVJo2QfLoWvWthdLTomzTMsypSRQnFiaPGKq/D0C91AFWUIGM=0x060x0bwup_version0x160x033.00x060x0dTYPE_COMPRESS0x160x0120x1d0x000x010x08px0xf1r0x88}$]_0xfe0xe60x130xe07a0xd9|0x9c0x140xe9uK0x8b0x1f0x9b|0x1ejN0x030xcb{C<0xd60xb80x93dt_0xab0xa980x830xb00xca0x940xf7&0x94E0xf6p0x0b@0xe60x93p0x0380xc40x1b>0x9e0xe8C0xa5%DB0x920x070xb7p0xfenf0x9b0x91$0xf00xbb0xfc0xb8E0xe50x0f:0x0c0x110x1c0xacP~0xd90xb1"0xea0xb30xaen%(0xee]E0x070xdf[0xd90xa4WJ0xbb^0x110xec0xb70x150xa00xca}0xdb0xa00x9e0xb10x9a0x7f\):0xaf0xda0x150x060xcdq0xab8o[0x8f0x8f0xad0x070x1du90x8cb,0xc00x010x91]20xf00xcaeqU0xf90xd30x05\0xe090xfc{n0xf20xa50x00A+0xb70xbc0x12]V0xe40xd5P0xc50xda0xf4z0xbe0x970xc6Ad4p&0xf80x110xda0x1b0xfbAg0x04N;0xc30xb2S0xb70x97Vr0xdd0xb4F0x010xaf0xc4K0x81D0xe20x1d0x9e0xe90xd9h0xfd0x0c0xf00xf1&v|0x900x9a0xac0xcbn0x0a0xd10xd70xa20x9b0x9a0xf10xbe0x990xe2fw0xb20x910xbe0xbc0xf10xab0x9c>0x920xfc~TL0xc6x0xba%0xef0xeb!0x8e0x92L0xc7J0xb10xa10xd3|0x150x9c90xb1'(0x1cq0xfc0x84s0x19`bc!0x11G0x990x9f0xdf0x0aUFe0xf70xa9 ]. The valid characters are defined in RFC 7230 and RFC 3986
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:490) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:263) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:926) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1791) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at java.base/java.lang.Thread.run(Thread.java:1447) ~[na:na]
+
+2026-05-08 00:06:18.023  INFO 26592 --- [nio-8081-exec-4] o.apache.coyote.http11.Http11Processor   : Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+
+java.lang.IllegalArgumentException: Invalid character found in method name [0x05*0x080x000x070x060x0csdk_platform0x160x0120x060x09encr_type0x160x07rsapost0x060x07version0x160x02v20x060x03cmd0x160x0arequest_v20x060x07bea_key0x160xackDNVI3h1/9EatovQuwJGlh/LdF+Yk5XQZ7isYKiDMS0K3X4HxrLadR6ZEaoZj10NzzSl56lKhv6GZjCXzLD77w5TPzrGuUeuzdLvg3i+yRi5ME45d1kd8pB5vfa8fA/x4tfMPH51u5aVoLMY7ZJVvh54eJZrNsM74K18ytO6/wg=0x060x0bwup_version0x160x033.00x060x0dTYPE_COMPRESS0x160x0120x1d0x000x010x040x000xd5B0x16SU0xf90xbd0x1010xc50xb30xba0x00Z0xa60x80)0x9800x95IX0xc80xc30xd70xcf0x048U0xe8aUo:$60xd40x810xae0x02d0xb10xb60xad0xa9z>0xcai0xb10x9c0x900xc20x1c ]. HTTP method names must be tokens
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:407) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:263) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:926) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1791) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-9.0.78.jar!/:na]
+	at java.base/java.lang.Thread.run(Thread.java:1447) ~[na:na]
+
